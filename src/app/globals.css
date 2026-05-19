@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html, body {
+  background: #f4f4f6;
+  color: #19191c;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background: #0e0e10;
+    color: #ededef;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl bg-white/70 dark:bg-ink-900/70 backdrop-blur border border-ink-200/60 dark:border-ink-800 p-5 shadow-sm;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition active:scale-[0.98];
+  }
+  .btn-primary {
+    @apply btn bg-calm-700 text-white hover:bg-calm-800;
+  }
+  .btn-ghost {
+    @apply btn bg-ink-100 dark:bg-ink-800 text-ink-800 dark:text-ink-100 hover:bg-ink-200 dark:hover:bg-ink-700;
+  }
+  .btn-soft {
+    @apply btn bg-calm-100 dark:bg-calm-900/30 text-calm-800 dark:text-calm-200 hover:bg-calm-200 dark:hover:bg-calm-900/50;
+  }
+  .input {
+    @apply w-full rounded-xl border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 px-3 py-2 text-sm text-ink-900 dark:text-ink-100 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-calm-400/40;
+  }
+  .label {
+    @apply text-sm font-medium text-ink-700 dark:text-ink-200;
+  }
+  .pill {
+    @apply inline-flex items-center rounded-full border border-ink-200 dark:border-ink-700 px-3 py-1 text-xs;
+  }
+  .pill-active {
+    @apply pill bg-calm-700 text-white border-calm-700;
+  }
+}
+
+.gradient-soft {
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(154, 175, 221, 0.35), transparent 60%),
+              radial-gradient(900px 600px at 110% 0%, rgba(253, 186, 116, 0.18), transparent 60%);
+}
