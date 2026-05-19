@@ -11,6 +11,7 @@ import {
 import { AppData } from "@/lib/types";
 import { KeyRound, Download, Upload, Trash2, ExternalLink } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
+import Reminders from "@/components/Reminders";
 
 function SettingsInner() {
   const [data, setData] = useState<AppData>(load());
@@ -57,6 +58,8 @@ function SettingsInner() {
         <div className="text-sm text-ink-500">設定</div>
         <h1 className="text-2xl font-semibold tracking-tight">你的 App，你做主</h1>
       </div>
+
+      <Reminders />
 
       <div className="card space-y-3">
         <div className="flex items-center gap-2">

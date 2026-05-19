@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { load, todayISO } from "@/lib/storage";
 import { AppData } from "@/lib/types";
 import { brainScoreNow, streak, pauseCount, topStressSources } from "@/lib/insights";
@@ -10,8 +11,11 @@ import BrainScoreRing from "@/components/BrainScoreRing";
 import { PLAN } from "@/lib/plan";
 import {
   ArrowRight,
+  BookOpen,
   CalendarCheck2,
+  CalendarRange,
   Flame,
+  Moon,
   Pause,
   Sparkles,
   Wind,
@@ -19,6 +23,7 @@ import {
 import ClientOnly from "@/components/ClientOnly";
 
 function DashboardInner() {
+  const router = useRouter();
   const [data, setData] = useState<AppData>(load());
 
   useEffect(() => {
@@ -26,6 +31,20 @@ function DashboardInner() {
     window.addEventListener("brain-recovery:update", onUpdate);
     return () => window.removeEventListener("brain-recovery:update", onUpdate);
   }, []);
+
+  useEffect(() => {
+    const d = load();
+    const isFresh =
+      !d.assessments.length &&
+      !d.daily.length &&
+      !d.pauses.length &&
+      !d.settings.name;
+    const seen = typeof window !== "undefined" && window.localStorage.getItem("brain-recovery-seen-welcome");
+    if (isFresh && !seen) {
+      window.localStorage.setItem("brain-recovery-seen-welcome", "1");
+      router.replace("/welcome");
+    }
+  }, [router]);
 
   const today = todayISO();
   const todayLog = data.daily.find((d) => d.date === today);
@@ -43,12 +62,13 @@ function DashboardInner() {
 
   const greeting = (() => {
     const h = new Date().getHours();
-    if (h < 5) return "夜深了";
-    if (h < 11) return "早安";
-    if (h < 14) return "中午好";
-    if (h < 18) return "下午好";
-    if (h < 22) return "晚上好";
-    return "夜深了";
+    const name = data.settings.name ? `，${data.settings.name}` : "";
+    if (h < 5) return `夜深了${name}`;
+    if (h < 11) return `早安${name}`;
+    if (h < 14) return `中午好${name}`;
+    if (h < 18) return `下午好${name}`;
+    if (h < 22) return `晚上好${name}`;
+    return `夜深了${name}`;
   })();
 
   return (
@@ -214,6 +234,33 @@ function DashboardInner() {
         </div>
         <ArrowRight className="h-5 w-5 text-ink-400" />
       </Link>
+
+      <div className="grid grid-cols-3 gap-2 pt-1">
+        <Link
+          href="/winddown"
+          className="card hover:shadow-md transition flex flex-col items-center text-center py-4"
+        >
+          <Moon className="h-5 w-5 text-calm-700 dark:text-calm-300" />
+          <div className="text-xs font-medium mt-1.5">睡前儀式</div>
+          <div className="text-[10px] text-ink-500 mt-0.5">17 分鐘</div>
+        </Link>
+        <Link
+          href="/history"
+          className="card hover:shadow-md transition flex flex-col items-center text-center py-4"
+        >
+          <CalendarRange className="h-5 w-5 text-calm-700 dark:text-calm-300" />
+          <div className="text-xs font-medium mt-1.5">歷史紀錄</div>
+          <div className="text-[10px] text-ink-500 mt-0.5">{data.daily.length} 天</div>
+        </Link>
+        <Link
+          href="/learn"
+          className="card hover:shadow-md transition flex flex-col items-center text-center py-4"
+        >
+          <BookOpen className="h-5 w-5 text-calm-700 dark:text-calm-300" />
+          <div className="text-xs font-medium mt-1.5">SHIFT 觀念</div>
+          <div className="text-[10px] text-ink-500 mt-0.5">了解大腦</div>
+        </Link>
+      </div>
     </div>
   );
 }

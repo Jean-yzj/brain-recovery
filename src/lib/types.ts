@@ -56,7 +56,15 @@ export interface AppData {
   settings: {
     apiKey?: string;
     name?: string;
+    reminders?: ReminderSettings;
   };
+}
+
+export interface ReminderSettings {
+  enabled: boolean;
+  morningCheckin?: string;
+  afternoonPause?: string;
+  windDown?: string;
 }
 
 export const STRESS_SOURCES = [
