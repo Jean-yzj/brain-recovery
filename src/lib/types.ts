@@ -25,6 +25,36 @@ export interface DailyLog {
   copingHabits: string[];
   stressSources: string[];
   note?: string;
+  emotions?: string[];
+  sleepHours?: number;
+  evenReflect?: { win?: string; lesson?: string; thanks?: string };
+}
+
+export type Chronotype = "lion" | "bear" | "wolf" | "dolphin";
+
+export interface ChronotypeResult {
+  type: Chronotype;
+  date: string;
+  scores: Record<Chronotype, number>;
+}
+
+export interface CaffeineLog {
+  ts: number;
+  amountMg: number;
+  source: string;
+}
+
+export interface StressReleaseLog {
+  ts: number;
+  door:
+    | "movement"
+    | "breath"
+    | "social"
+    | "laughter"
+    | "affection"
+    | "cry"
+    | "creative";
+  note?: string;
 }
 
 export interface PauseSession {
@@ -53,6 +83,9 @@ export interface AppData {
   plan: PlanState;
   chat: ChatMessage[];
   weeklyReports: { weekOf: string; markdown: string; createdAt: number }[];
+  chronotype?: ChronotypeResult;
+  caffeine: CaffeineLog[];
+  releases: StressReleaseLog[];
   settings: {
     apiKey?: string;
     name?: string;
@@ -100,3 +133,38 @@ export const COPING_HABITS = [
   "拖延",
   "對人不耐煩",
 ] as const;
+
+// 情緒輪簡化版 — Lisa Feldman Barrett 的 emotion granularity 觀點：
+// 越能精準命名情緒，越容易降低它的強度。
+export const EMOTION_GROUPS: { label: string; tone: "warm" | "calm" | "ink"; words: string[] }[] = [
+  {
+    label: "煩躁系",
+    tone: "warm",
+    words: ["焦躁", "煩悶", "急", "卡住", "不耐煩"],
+  },
+  {
+    label: "低能量系",
+    tone: "ink",
+    words: ["疲憊", "麻木", "沒勁", "想躲起來", "懶得"],
+  },
+  {
+    label: "焦慮系",
+    tone: "warm",
+    words: ["緊繃", "擔心", "想太多", "胸悶", "靜不下來"],
+  },
+  {
+    label: "難過系",
+    tone: "ink",
+    words: ["失落", "委屈", "難過", "孤單", "想哭"],
+  },
+  {
+    label: "穩定系",
+    tone: "calm",
+    words: ["平靜", "踏實", "放鬆", "感謝", "知足"],
+  },
+  {
+    label: "正向系",
+    tone: "calm",
+    words: ["有動力", "好奇", "期待", "投入", "開心"],
+  },
+];

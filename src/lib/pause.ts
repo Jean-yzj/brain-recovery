@@ -4,7 +4,7 @@ export interface PauseTask {
   short: string;
   steps: string[];
   durationSec: number;
-  mode: "breath" | "body" | "write" | "view" | "sound" | "rule";
+  mode: "breath" | "body" | "write" | "view" | "sound" | "rule" | "ground" | "mbsr";
 }
 
 export const PAUSE_TASKS: PauseTask[] = [
@@ -87,6 +87,32 @@ export const PAUSE_TASKS: PauseTask[] = [
     ],
     durationSec: 60,
     mode: "rule",
+  },
+  {
+    id: "grounding",
+    title: "5-4-3-2-1 接地",
+    short: "焦慮高時把感官拉回現在這個空間。",
+    steps: [
+      "看 5 個你現在看得到的東西",
+      "感覺 4 個你身體碰得到的東西（椅子、衣服、地板）",
+      "聽 3 個你聽得到的聲音",
+      "聞 2 個味道（或想 2 個你喜歡的味道）",
+      "嚐 1 個味道（喝水也算）",
+    ],
+    durationSec: 90,
+    mode: "ground",
+  },
+  {
+    id: "mbsr-3min",
+    title: "3 分鐘呼吸空間",
+    short: "MBSR 經典練習。覺察 → 呼吸 → 擴展。",
+    steps: [
+      "前 1 分鐘：問自己『我現在身上有什麼？』 感受、念頭、身體",
+      "中間 1 分鐘：把注意力收回呼吸上，只覺察一吸一吐",
+      "後 1 分鐘：把覺察擴展到整個身體與當下的空間",
+    ],
+    durationSec: 180,
+    mode: "mbsr",
   },
 ];
 

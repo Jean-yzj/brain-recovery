@@ -5,6 +5,8 @@ import { load } from "@/lib/storage";
 import { AppData } from "@/lib/types";
 import { trend, topStressSources, avg, pauseCount } from "@/lib/insights";
 import Sparkline from "@/components/Sparkline";
+import RadarChart from "@/components/RadarChart";
+import { AXIS_LABEL } from "@/lib/assessment";
 import ClientOnly from "@/components/ClientOnly";
 
 function InsightsInner() {
@@ -71,12 +73,35 @@ function InsightsInner() {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
+  const assessment = data.assessments[0];
+
   return (
     <div className="space-y-5 animate-fade-in">
       <div className="pt-2">
         <div className="text-sm text-ink-500">大腦洞察 · 最近 7 天</div>
         <h1 className="text-2xl font-semibold tracking-tight">你的模式</h1>
       </div>
+
+      {assessment && (
+        <div className="card">
+          <div className="text-sm font-medium mb-2">SHIFT 五軸雷達</div>
+          <div className="flex justify-center">
+            <RadarChart
+              axes={[
+                { label: AXIS_LABEL.sleep.name, value: assessment.axes.sleep },
+                { label: AXIS_LABEL.stress.name, value: assessment.axes.stress },
+                { label: AXIS_LABEL.body.name, value: assessment.axes.body },
+                { label: AXIS_LABEL.food.name, value: assessment.axes.food },
+                { label: AXIS_LABEL.tech.name, value: assessment.axes.tech },
+              ]}
+              size={260}
+            />
+          </div>
+          <p className="text-xs text-ink-500 mt-2 text-center">
+            離中心越遠代表越疲勞。理想形狀是接近中心的小圖形。
+          </p>
+        </div>
+      )}
 
       <div className="card">
         <div className="text-sm font-medium mb-3">日均趨勢</div>

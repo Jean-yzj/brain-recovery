@@ -14,11 +14,15 @@ import {
   BookOpen,
   CalendarCheck2,
   CalendarRange,
+  Clock,
+  Coffee,
   Flame,
+  Heart,
   Moon,
   Pause,
   Sparkles,
   Wind,
+  Zap,
 } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
 
@@ -235,33 +239,52 @@ function DashboardInner() {
         <ArrowRight className="h-5 w-5 text-ink-400" />
       </Link>
 
-      <div className="grid grid-cols-3 gap-2 pt-1">
-        <Link
-          href="/winddown"
-          className="card hover:shadow-md transition flex flex-col items-center text-center py-4"
-        >
-          <Moon className="h-5 w-5 text-calm-700 dark:text-calm-300" />
-          <div className="text-xs font-medium mt-1.5">睡前儀式</div>
-          <div className="text-[10px] text-ink-500 mt-0.5">17 分鐘</div>
-        </Link>
-        <Link
-          href="/history"
-          className="card hover:shadow-md transition flex flex-col items-center text-center py-4"
-        >
-          <CalendarRange className="h-5 w-5 text-calm-700 dark:text-calm-300" />
-          <div className="text-xs font-medium mt-1.5">歷史紀錄</div>
-          <div className="text-[10px] text-ink-500 mt-0.5">{data.daily.length} 天</div>
-        </Link>
-        <Link
-          href="/learn"
-          className="card hover:shadow-md transition flex flex-col items-center text-center py-4"
-        >
-          <BookOpen className="h-5 w-5 text-calm-700 dark:text-calm-300" />
-          <div className="text-xs font-medium mt-1.5">SHIFT 觀念</div>
-          <div className="text-[10px] text-ink-500 mt-0.5">了解大腦</div>
-        </Link>
+      <div className="pt-2">
+        <div className="text-xs text-ink-500 mb-2 ml-1">工具</div>
+        <div className="grid grid-cols-3 gap-2">
+          <Tile href="/release" icon={<Heart className="h-5 w-5" />} title="壓力出口" sub="7 道門" />
+          <Tile href="/caffeine" icon={<Coffee className="h-5 w-5" />} title="咖啡因" sub="半衰期" />
+          <Tile href="/sleep-calc" icon={<Clock className="h-5 w-5" />} title="睡眠週期" sub="90 分鐘" />
+          <Tile
+            href="/chronotype"
+            icon={<Zap className="h-5 w-5" />}
+            title="Chronotype"
+            sub={data.chronotype ? "已測" : "做測驗"}
+          />
+          <Tile href="/winddown" icon={<Moon className="h-5 w-5" />} title="睡前儀式" sub="17 分鐘" />
+          <Tile
+            href="/history"
+            icon={<CalendarRange className="h-5 w-5" />}
+            title="歷史紀錄"
+            sub={`${data.daily.length} 天`}
+          />
+          <Tile href="/learn" icon={<BookOpen className="h-5 w-5" />} title="SHIFT 觀念" sub="了解大腦" />
+        </div>
       </div>
     </div>
+  );
+}
+
+function Tile({
+  href,
+  icon,
+  title,
+  sub,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  title: string;
+  sub: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="card hover:shadow-md transition flex flex-col items-center text-center py-4"
+    >
+      <div className="text-calm-700 dark:text-calm-300">{icon}</div>
+      <div className="text-xs font-medium mt-1.5">{title}</div>
+      <div className="text-[10px] text-ink-500 mt-0.5">{sub}</div>
+    </Link>
   );
 }
 

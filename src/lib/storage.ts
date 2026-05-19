@@ -3,10 +3,13 @@
 import {
   AppData,
   AssessmentResult,
+  CaffeineLog,
   ChatMessage,
+  ChronotypeResult,
   DailyLog,
   PauseSession,
   PlanState,
+  StressReleaseLog,
 } from "./types";
 
 const KEY = "brain-recovery-v1";
@@ -18,6 +21,8 @@ const empty: AppData = {
   plan: { startedAt: null, currentWeek: 1, completedTasks: {} },
   chat: [],
   weeklyReports: [],
+  caffeine: [],
+  releases: [],
   settings: {},
 };
 
@@ -100,6 +105,34 @@ export function pushChat(m: ChatMessage) {
 export function setApiKey(key: string) {
   update((d) => {
     d.settings.apiKey = key;
+  });
+}
+
+export function setChronotype(r: ChronotypeResult) {
+  update((d) => {
+    d.chronotype = r;
+  });
+}
+
+export function addCaffeine(c: CaffeineLog) {
+  update((d) => {
+    d.caffeine = d.caffeine || [];
+    d.caffeine.unshift(c);
+    if (d.caffeine.length > 500) d.caffeine.length = 500;
+  });
+}
+
+export function removeCaffeine(ts: number) {
+  update((d) => {
+    d.caffeine = (d.caffeine || []).filter((x) => x.ts !== ts);
+  });
+}
+
+export function addRelease(r: StressReleaseLog) {
+  update((d) => {
+    d.releases = d.releases || [];
+    d.releases.unshift(r);
+    if (d.releases.length > 500) d.releases.length = 500;
   });
 }
 

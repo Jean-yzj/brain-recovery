@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {
   COPING_HABITS,
   DailyLog,
+  EMOTION_GROUPS,
   STRESS_SOURCES,
   SYMPTOMS,
 } from "@/lib/types";
@@ -43,6 +44,9 @@ function DailyInner() {
       copingHabits: [],
       stressSources: [],
       note: "",
+      emotions: [],
+      sleepHours: 7,
+      evenReflect: {},
     }
   );
   const [saved, setSaved] = useState(false);
@@ -59,6 +63,16 @@ function DailyInner() {
       return {
         ...cur,
         [key]: arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v],
+      };
+    });
+  };
+
+  const toggleEmotion = (v: string) => {
+    setLog((cur) => {
+      const arr = cur.emotions ?? [];
+      return {
+        ...cur,
+        emotions: arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v],
       };
     });
   };
@@ -103,6 +117,69 @@ function DailyInner() {
         ))}
       </div>
 
+      <div className="card">
+        <div className="flex items-baseline justify-between mb-2">
+          <div className="label">昨晚睡了幾小時？</div>
+          <div className="text-sm tabular-nums text-calm-700 dark:text-calm-300">
+            {log.sleepHours ?? 7} 小時
+          </div>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={12}
+          step={0.5}
+          value={log.sleepHours ?? 7}
+          onChange={(e) =>
+            setLog({ ...log, sleepHours: Number(e.target.value) })
+          }
+          className="w-full accent-calm-600"
+        />
+        <div className="flex justify-between text-[11px] text-ink-500 mt-0.5">
+          <span>0</span>
+          <span>4</span>
+          <span>7</span>
+          <span>10</span>
+          <span>12</span>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="label mb-1">今天最像哪幾種情緒？（多選）</div>
+        <p className="text-[11px] text-ink-500 mb-3">
+          越精準命名情緒，越容易降低它的強度。— Lisa Feldman Barrett
+        </p>
+        <div className="space-y-3">
+          {EMOTION_GROUPS.map((g) => (
+            <div key={g.label}>
+              <div className="text-[11px] text-ink-500 mb-1.5">{g.label}</div>
+              <div className="flex flex-wrap gap-1.5">
+                {g.words.map((w) => {
+                  const on = (log.emotions ?? []).includes(w);
+                  return (
+                    <button
+                      key={w}
+                      onClick={() => toggleEmotion(w)}
+                      className={`text-[12px] rounded-full px-2.5 py-1 border transition ${
+                        on
+                          ? g.tone === "warm"
+                            ? "bg-warm-500 text-white border-warm-500"
+                            : g.tone === "calm"
+                            ? "bg-calm-700 text-white border-calm-700"
+                            : "bg-ink-700 text-white border-ink-700"
+                          : "border-ink-200 dark:border-ink-700 hover:border-calm-400"
+                      }`}
+                    >
+                      {w}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <ChipGroup
         title="身體有沒有出現警訊？（多選）"
         options={[...SYMPTOMS]}
@@ -132,6 +209,61 @@ function DailyInner() {
           className="input mt-2 min-h-[80px]"
           placeholder="例如：今天會議多到不行，下午頭已經痛了。"
         />
+      </div>
+
+      <div className="card space-y-3">
+        <div className="label">睡前 3 句反思（選填）</div>
+        <p className="text-[11px] text-ink-500 -mt-1">
+          一個小小的儀式，幫大腦關機。一句話就好。
+        </p>
+        <div>
+          <div className="text-xs text-ink-500 mb-1">今天一個小小的 win</div>
+          <input
+            value={log.evenReflect?.win ?? ""}
+            onChange={(e) =>
+              setLog({
+                ...log,
+                evenReflect: { ...(log.evenReflect ?? {}), win: e.target.value },
+              })
+            }
+            placeholder="例如：把那封信回了"
+            className="input"
+          />
+        </div>
+        <div>
+          <div className="text-xs text-ink-500 mb-1">今天學到一件事</div>
+          <input
+            value={log.evenReflect?.lesson ?? ""}
+            onChange={(e) =>
+              setLog({
+                ...log,
+                evenReflect: {
+                  ...(log.evenReflect ?? {}),
+                  lesson: e.target.value,
+                },
+              })
+            }
+            placeholder="例如：開會前不要先看 IG"
+            className="input"
+          />
+        </div>
+        <div>
+          <div className="text-xs text-ink-500 mb-1">今天感謝的一件事</div>
+          <input
+            value={log.evenReflect?.thanks ?? ""}
+            onChange={(e) =>
+              setLog({
+                ...log,
+                evenReflect: {
+                  ...(log.evenReflect ?? {}),
+                  thanks: e.target.value,
+                },
+              })
+            }
+            placeholder="例如：有人記得我喜歡黑咖啡"
+            className="input"
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-3">
