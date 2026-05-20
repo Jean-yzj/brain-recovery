@@ -3,16 +3,22 @@
 import {
   AppData,
   AssessmentResult,
+  BoredomSession,
   CaffeineLog,
   ChatMessage,
   ChronotypeResult,
+  CompassionSession,
   DailyLog,
   DeepWorkSession,
   DefusionLog,
   DetoxState,
+  HabitLog,
+  HabitStack,
+  MorningPage,
   PauseSession,
   PlanState,
   QuestState,
+  SighSession,
   StressReleaseLog,
 } from "./types";
 
@@ -30,6 +36,12 @@ const empty: AppData = {
   deepWork: [],
   defusions: [],
   quests: [],
+  habits: [],
+  habitLogs: [],
+  sighs: [],
+  boredom: [],
+  morningPages: [],
+  compassion: [],
   settings: {},
 };
 
@@ -202,6 +214,65 @@ export function setSleepTarget(h: number) {
 export function setDeepWorkTarget(m: number) {
   update((d) => {
     d.settings.deepWorkTargetMin = m;
+  });
+}
+
+export function addHabitStack(h: HabitStack) {
+  update((d) => {
+    d.habits = d.habits || [];
+    d.habits.unshift(h);
+  });
+}
+
+export function removeHabitStack(id: string) {
+  update((d) => {
+    d.habits = (d.habits || []).filter((x) => x.id !== id);
+    d.habitLogs = (d.habitLogs || []).filter((x) => x.stackId !== id);
+  });
+}
+
+export function toggleHabitDoneToday(stackId: string, dateIso: string) {
+  update((d) => {
+    d.habitLogs = d.habitLogs || [];
+    const idx = d.habitLogs.findIndex(
+      (l) => l.stackId === stackId && l.date === dateIso
+    );
+    if (idx >= 0) d.habitLogs.splice(idx, 1);
+    else d.habitLogs.unshift({ stackId, date: dateIso });
+  });
+}
+
+export function addSigh(s: SighSession) {
+  update((d) => {
+    d.sighs = d.sighs || [];
+    d.sighs.unshift(s);
+    if (d.sighs.length > 500) d.sighs.length = 500;
+  });
+}
+
+export function addBoredom(b: BoredomSession) {
+  update((d) => {
+    d.boredom = d.boredom || [];
+    d.boredom.unshift(b);
+    if (d.boredom.length > 200) d.boredom.length = 200;
+  });
+}
+
+export function addMorningPage(p: MorningPage) {
+  update((d) => {
+    d.morningPages = d.morningPages || [];
+    const idx = d.morningPages.findIndex((x) => x.date === p.date);
+    if (idx >= 0) d.morningPages[idx] = p;
+    else d.morningPages.unshift(p);
+    if (d.morningPages.length > 365) d.morningPages.length = 365;
+  });
+}
+
+export function addCompassion(c: CompassionSession) {
+  update((d) => {
+    d.compassion = d.compassion || [];
+    d.compassion.unshift(c);
+    if (d.compassion.length > 200) d.compassion.length = 200;
   });
 }
 

@@ -18,13 +18,18 @@ import {
   CalendarRange,
   Clock,
   Coffee,
+  Feather,
   Flame,
   Heart,
+  HeartHandshake,
+  Hourglass,
+  Link2,
   Moon,
   Pause,
   Smartphone,
   Sparkle,
   Sparkles,
+  Sunrise,
   Target,
   Wind,
   Zap,
@@ -248,18 +253,35 @@ function DashboardInner() {
         <div className="text-xs text-ink-500 mb-2 ml-1">每日</div>
         <div className="grid grid-cols-3 gap-2">
           <Tile href="/quest" icon={<Target className="h-5 w-5" />} title="今日任務" sub="只做這 1 件" />
-          <Tile href="/defuse" icon={<Sparkle className="h-5 w-5" />} title="思緒解離" sub="念頭鬆開" />
-          <Tile href="/deep-work" icon={<Brain className="h-5 w-5" />} title="深度工作" sub="計時器" />
+          <Tile href="/morning-pages" icon={<Sunrise className="h-5 w-5" />} title="晨間日記" sub="意識流" />
+          <Tile href="/habits" icon={<Link2 className="h-5 w-5" />} title="習慣堆疊" sub={`${(data.habits ?? []).length} 條`} />
         </div>
       </div>
 
       <div className="pt-2">
-        <div className="text-xs text-ink-500 mb-2 ml-1">工具</div>
+        <div className="text-xs text-ink-500 mb-2 ml-1">當下緩解</div>
         <div className="grid grid-cols-3 gap-2">
+          <Tile href="/sigh" icon={<Feather className="h-5 w-5" />} title="生理嘆息" sub="60 秒鬆開" />
+          <Tile href="/defuse" icon={<Sparkle className="h-5 w-5" />} title="思緒解離" sub="念頭鬆開" />
+          <Tile href="/compassion" icon={<HeartHandshake className="h-5 w-5" />} title="自我慈悲" sub="3 步驟" />
+        </div>
+      </div>
+
+      <div className="pt-2">
+        <div className="text-xs text-ink-500 mb-2 ml-1">深化練習</div>
+        <div className="grid grid-cols-3 gap-2">
+          <Tile href="/deep-work" icon={<Brain className="h-5 w-5" />} title="深度工作" sub="計時器" />
+          <Tile href="/boredom" icon={<Hourglass className="h-5 w-5" />} title="無聊訓練" sub="多巴胺校準" />
           <Tile href="/release" icon={<Heart className="h-5 w-5" />} title="壓力出口" sub="7 道門" />
+        </div>
+      </div>
+
+      <div className="pt-2">
+        <div className="text-xs text-ink-500 mb-2 ml-1">追蹤工具</div>
+        <div className="grid grid-cols-3 gap-2">
           <Tile href="/caffeine" icon={<Coffee className="h-5 w-5" />} title="咖啡因" sub="半衰期" />
           <Tile href="/sleep-calc" icon={<Clock className="h-5 w-5" />} title="睡眠週期" sub="90 分鐘" />
-          <Tile href="/sleep-debt" icon={<Bed className="h-5 w-5" />} title="睡眠債" sub="14 天滾動" />
+          <Tile href="/sleep-debt" icon={<Bed className="h-5 w-5" />} title="睡眠債" sub="14 天" />
           <Tile
             href="/chronotype"
             icon={<Zap className="h-5 w-5" />}
@@ -273,6 +295,12 @@ function DashboardInner() {
             sub={data.detox ? "進行中" : "選挑戰"}
           />
           <Tile href="/winddown" icon={<Moon className="h-5 w-5" />} title="睡前儀式" sub="17 分鐘" />
+        </div>
+      </div>
+
+      <div className="pt-2">
+        <div className="text-xs text-ink-500 mb-2 ml-1">回顧</div>
+        <div className="grid grid-cols-3 gap-2">
           <Tile
             href="/history"
             icon={<CalendarRange className="h-5 w-5" />}

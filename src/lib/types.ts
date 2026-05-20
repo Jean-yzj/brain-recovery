@@ -84,6 +84,43 @@ export interface QuestState {
   rerolled?: boolean;
 }
 
+export interface HabitStack {
+  id: string;
+  anchor: string;
+  habit: string;
+  createdAt: number;
+}
+
+export interface HabitLog {
+  date: string;
+  stackId: string;
+}
+
+export interface SighSession {
+  ts: number;
+  cycles: number;
+}
+
+export interface BoredomSession {
+  ts: number;
+  targetSec: number;
+  completedSec: number;
+  urgeNote?: string;
+}
+
+export interface MorningPage {
+  date: string;
+  ts: number;
+  minutes: number;
+  wordCount: number;
+  text?: string;
+}
+
+export interface CompassionSession {
+  ts: number;
+  situation?: string;
+}
+
 export interface PauseSession {
   date: string;
   taskId: string;
@@ -117,6 +154,12 @@ export interface AppData {
   detox?: DetoxState;
   defusions: DefusionLog[];
   quests: QuestState[];
+  habits: HabitStack[];
+  habitLogs: HabitLog[];
+  sighs: SighSession[];
+  boredom: BoredomSession[];
+  morningPages: MorningPage[];
+  compassion: CompassionSession[];
   settings: {
     apiKey?: string;
     name?: string;
