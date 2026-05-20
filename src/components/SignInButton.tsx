@@ -1,20 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { signIn, signOut } from "next-auth/react";
 import { LogIn, LogOut, AlertCircle } from "lucide-react";
 
 interface SessionLike {
   user?: { name?: string | null; email?: string | null; image?: string | null };
   error?: string;
+  hasIntegrationAccess?: boolean;
 }
 
 interface Props {
   variant?: "default" | "card";
+  provider?: "google" | "google-integration";
+  callbackUrl?: string;
 }
 
-export default function SignInButton({ variant = "default" }: Props) {
+export default function SignInButton({
+  variant = "default",
+  provider = "google",
+  callbackUrl,
+}: Props) {
   const [session, setSession] = useState<SessionLike | null>(null);
   const [loading, setLoading] = useState(true);
+  const targetCallbackUrl = callbackUrl ?? (variant === "card" ? "/schedule" : "/settings");
 
   const fetchSession = async () => {
     try {
@@ -39,25 +48,30 @@ export default function SignInButton({ variant = "default" }: Props) {
   if (!session?.user) {
     if (variant === "card") {
       return (
-        <a
-          href="/api/auth/signin?callbackUrl=/schedule"
+        <button
+          type="button"
+          onClick={() => signIn(provider, { callbackUrl: targetCallbackUrl })}
           className="card flex items-center justify-between hover:shadow-md transition"
         >
           <div>
             <div className="text-sm font-medium flex items-center gap-2">
-              <LogIn className="h-4 w-4" /> 用 Google 登入
+              <LogIn className="h-4 w-4" /> 連接 Google 行事曆 / Tasks
             </div>
             <div className="text-xs text-ink-500 mt-1">
-              啟用「排入行事曆 / 提醒事項」功能。每個人只看到自己的資料。
+              只有在你要排入行事曆或提醒事項時，才會要求這兩個額外權限。
             </div>
           </div>
-        </a>
+        </button>
       );
     }
     return (
-      <a href="/api/auth/signin?callbackUrl=/settings" className="btn-primary">
+      <button
+        type="button"
+        onClick={() => signIn(provider, { callbackUrl: targetCallbackUrl })}
+        className="btn-primary"
+      >
         <LogIn className="h-4 w-4" /> 用 Google 登入
-      </a>
+      </button>
     );
   }
 
@@ -87,12 +101,13 @@ export default function SignInButton({ variant = "default" }: Props) {
           </div>
         )}
       </div>
-      <a
-        href="/api/auth/signout?callbackUrl=/settings"
+      <button
+        type="button"
+        onClick={() => signOut({ callbackUrl: "/settings" })}
         className="btn-ghost px-3 py-1.5 text-xs"
       >
         <LogOut className="h-3.5 w-3.5" /> 登出
-      </a>
+      </button>
     </div>
   );
 }

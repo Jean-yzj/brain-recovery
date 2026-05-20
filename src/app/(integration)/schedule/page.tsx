@@ -29,6 +29,7 @@ interface GEvent {
 interface Session {
   user?: { name?: string | null; email?: string | null; image?: string | null };
   error?: string;
+  hasIntegrationAccess?: boolean;
 }
 
 function ScheduleInner() {
@@ -53,7 +54,7 @@ function ScheduleInner() {
     const res = await fetch("/api/auth/session", { cache: "no-store" });
     const d = await res.json();
     setSession(d?.user ? d : null);
-    return !!d?.user;
+    return !!d?.hasIntegrationAccess;
   };
 
   const fetchEvents = async () => {
@@ -87,6 +88,7 @@ function ScheduleInner() {
   }, []);
 
   const isSignedIn = !!session?.user && session.error !== "RefreshError";
+  const hasIntegrationAccess = !!session?.hasIntegrationAccess;
   const list = suggestions(data.chronotype?.type);
 
   const addToCalendar = async (
@@ -163,9 +165,15 @@ function ScheduleInner() {
         </p>
       </div>
 
-      {!isSignedIn && <SignInButton variant="card" />}
+      {!hasIntegrationAccess && (
+        <SignInButton
+          variant="card"
+          provider="google-integration"
+          callbackUrl="/schedule"
+        />
+      )}
 
-      {isSignedIn && (
+      {hasIntegrationAccess && (
         <>
           <div className="card">
             <div className="flex items-baseline justify-between mb-3">
@@ -344,7 +352,7 @@ function ScheduleInner() {
                                   )
                                 : addToTasks(s.id, s.title, s.description, time)
                             }
-                            disabled={!isSignedIn || busyId === s.id}
+                            disabled={!hasIntegrationAccess || busyId === s.id}
                             className="btn-primary flex-1 disabled:opacity-50"
                           >
                             {busyId === s.id ? (
@@ -352,7 +360,7 @@ function ScheduleInner() {
                             ) : (
                               <>
                                 <Plus className="h-4 w-4" />
-                                {isSignedIn ? "排入" : "登入後可用"}
+                                {hasIntegrationAccess ? "排入" : "連接後可用"}
                               </>
                             )}
                           </button>
@@ -368,6 +376,11 @@ function ScheduleInner() {
       </div>
 
       <div className="card text-xs text-ink-500 space-y-2">
+        {isSignedIn && !hasIntegrationAccess && (
+          <div className="rounded-xl border border-calm-200 bg-calm-50 px-3 py-2 text-calm-800">
+            你已完成一般 Google 登入；若要使用行事曆 / 提醒事項同步，再額外授權一次即可。
+          </div>
+        )}
         <div className="text-sm font-medium text-ink-700 dark:text-ink-200">
           隱私說明
         </div>

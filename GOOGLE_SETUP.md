@@ -28,11 +28,12 @@
    - `.../auth/userinfo.email`
    - `.../auth/userinfo.profile`
    - `openid`
+5. 若你要啟用「排行程」整合，再額外加入：
    - `https://www.googleapis.com/auth/calendar.events`（讀寫今天的事件）
    - `https://www.googleapis.com/auth/tasks`（讀寫提醒事項）
-5. **Test users** 區段：先加入你自己的 Google email（測試階段只能允許名單中的人登入）
+6. **Test users** 區段：先加入你自己的 Google email（測試階段只能允許名單中的人登入）
 
-> 上線後若希望任何人都能登入，需要將 App 從「Testing」改成「In production」並可能需要 Google 驗證流程。如果只是給自己/朋友用，留在 Testing 模式即可，每個專案最多可加 100 個測試用戶。
+> 上線後若希望任何人都能進行「一般 Google 登入」，需要將 App 從「Testing」改成「In production」。若還要開放 Calendar / Tasks 整合給所有人，通常還需要走 Google OAuth 驗證流程。如果只是給自己/朋友用，留在 Testing 模式即可，每個專案最多可加 100 個測試用戶。
 
 ### 4. 建立 OAuth Client ID
 1. 「APIs & Services」→「Credentials」
@@ -129,7 +130,7 @@ npm run dev
 ## 五、常見問題
 
 **Q：登入時跳「Access blocked: 大腦不疲勞 has not completed verification」**
-A：你的 App 還在 Testing 模式，且當前登入的 Google 帳號不在 Test users 名單裡。到 Cloud Console 的 OAuth consent screen → Test users 加進去。
+A：如果只是一般登入，先確認 App 已從 Testing 切到 In production。若是進一步授權 Calendar / Tasks 時看到這個訊息，代表敏感 scope 還沒完成驗證，或該帳號不在測試名單裡。
 
 **Q：重新登入頻率？**
 A：access token 1 小時過期，App 會用 refresh token 自動換新。refresh token 通常 6 個月內不會過期（除非使用者撤銷授權或長時間沒用）。

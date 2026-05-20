@@ -68,7 +68,8 @@ function SettingsInner() {
           <div className="text-sm font-medium">Google 行事曆 / 提醒事項</div>
         </div>
         <p className="text-xs text-ink-500">
-          登入 Google 後，可以把每天的練習一鍵排入你的行事曆或提醒事項。
+          先用 Google 完成一般登入。只有你真的要把練習排入行事曆或提醒事項時，
+          才需要在排行程頁額外授權 Calendar / Tasks。
           每個人只看到自己的資料 — App 透過 Google 帳號識別，不存任何雲端紀錄。
         </p>
         <SignInButton />

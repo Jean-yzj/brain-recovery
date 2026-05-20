@@ -5,9 +5,16 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const session = await auth();
-  const token = (session as unknown as { accessToken?: string })?.accessToken;
+  const sessionData = session as unknown as {
+    accessToken?: string;
+    hasIntegrationAccess?: boolean;
+  };
+  const token = sessionData?.accessToken;
   if (!token) {
     return Response.json({ error: "unauth" }, { status: 401 });
+  }
+  if (!sessionData?.hasIntegrationAccess) {
+    return Response.json({ error: "missing_scope" }, { status: 403 });
   }
 
   const start = new Date();
