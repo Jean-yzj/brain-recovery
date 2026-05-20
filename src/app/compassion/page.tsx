@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { addCompassion } from "@/lib/storage";
 import ClientOnly from "@/components/ClientOnly";
+import NextStep from "@/components/NextStep";
 import { Heart, ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 interface Step {
@@ -154,6 +155,12 @@ function CompassionInner() {
             </p>
           </div>
         )}
+
+        <NextStep
+          title="如果有具體念頭卡住"
+          reason="ACT 思緒解離 6 個技巧，把念頭從事實降階為一個念頭。"
+          href="/defuse"
+        />
 
         <button
           onClick={() => {

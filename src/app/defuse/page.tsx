@@ -5,6 +5,7 @@ import { TECHNIQUES } from "@/lib/defusion";
 import { addDefusion } from "@/lib/storage";
 import { Check, ArrowLeft } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
+import NextStep from "@/components/NextStep";
 
 function DefuseInner() {
   const [thought, setThought] = useState("");
@@ -102,6 +103,13 @@ function DefuseInner() {
             然後去做那件事，哪怕只是一小步。
           </div>
         </div>
+        <NextStep
+          title="如果還是覺得自己很糟"
+          reason="自我慈悲三步驟可以把對自己的攻擊軟化下來。"
+          href="/compassion"
+          duration="3 分鐘"
+        />
+
         <button
           onClick={() => {
             setStage("input");

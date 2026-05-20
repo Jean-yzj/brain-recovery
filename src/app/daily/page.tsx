@@ -12,6 +12,7 @@ import { load, todayISO, upsertDaily } from "@/lib/storage";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import ClientOnly from "@/components/ClientOnly";
+import NextStep from "@/components/NextStep";
 
 const SLIDERS: {
   key: keyof Pick<
@@ -282,6 +283,14 @@ function DailyInner() {
           </Link>
         )}
       </div>
+
+      {saved && (
+        <NextStep
+          title="看看 coach 根據今天的狀態給你的建議"
+          reason="你剛寫的會立刻影響首頁的推薦。"
+          href="/"
+        />
+      )}
     </div>
   );
 }

@@ -121,6 +121,28 @@ export interface CompassionSession {
   situation?: string;
 }
 
+export type Goal =
+  | "sleep"
+  | "anxiety"
+  | "focus"
+  | "phone"
+  | "burnout"
+  | "general";
+
+export interface TriggerLog {
+  ts: number;
+  type: "phone" | "sugar" | "coffee" | "scroll" | "snack" | "drink" | "other";
+  trigger?: string; // 觸發的情境 (boredom / anxiety / habit / hungry / tired / sad / other)
+  acted?: boolean;  // 真的做了嗎
+}
+
+export interface WalkSession {
+  ts: number;
+  minutes: number;
+  perceivedStressBefore?: number;
+  perceivedStressAfter?: number;
+}
+
 export interface PauseSession {
   date: string;
   taskId: string;
@@ -160,12 +182,17 @@ export interface AppData {
   boredom: BoredomSession[];
   morningPages: MorningPage[];
   compassion: CompassionSession[];
+  triggers: TriggerLog[];
+  walks: WalkSession[];
   settings: {
     apiKey?: string;
     name?: string;
     reminders?: ReminderSettings;
     sleepTargetHours?: number;
     deepWorkTargetMin?: number;
+    goal?: Goal;
+    timeBudgetMin?: number;
+    onboardedAt?: string;
   };
 }
 

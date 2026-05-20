@@ -6,6 +6,7 @@ import { AppData } from "@/lib/types";
 import { trend, topStressSources, avg, pauseCount } from "@/lib/insights";
 import Sparkline from "@/components/Sparkline";
 import RadarChart from "@/components/RadarChart";
+import SHIFTHeatmap from "@/components/SHIFTHeatmap";
 import { AXIS_LABEL } from "@/lib/assessment";
 import ClientOnly from "@/components/ClientOnly";
 
@@ -80,6 +81,14 @@ function InsightsInner() {
       <div className="pt-2">
         <div className="text-sm text-ink-500">大腦洞察 · 最近 7 天</div>
         <h1 className="text-2xl font-semibold tracking-tight">你的模式</h1>
+      </div>
+
+      <div className="card">
+        <div className="text-sm font-medium mb-3">SHIFT 30 天時間軸</div>
+        <SHIFTHeatmap daily={data.daily} days={30} />
+        <p className="text-xs text-ink-500 mt-3">
+          每一格是一天的疲勞程度。顏色越紅越疲勞、越藍越穩定、灰色是沒打卡。
+        </p>
       </div>
 
       {assessment && (

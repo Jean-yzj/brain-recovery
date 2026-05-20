@@ -98,3 +98,50 @@ export const PLAN: WeekPlan[] = [
 export function weekTotalTasks(week: number) {
   return PLAN.find((p) => p.week === week)?.tasks.length ?? 0;
 }
+
+// 依使用者最弱的 SHIFT 軸，在 week 2–7 加上一個個人化任務
+type WeakAxis = "sleep" | "tech" | "stress" | "body" | "food";
+
+const AXIS_BONUS: Record<WeakAxis, WeekTask> = {
+  sleep: {
+    id: "axis-sleep",
+    title: "本週個人化：睡前 10 分鐘關燈儀式",
+    detail: "你的弱軸是睡眠。睡前 10 分鐘把主燈關掉，剩一盞暖光。",
+    minutes: 10,
+  },
+  tech: {
+    id: "axis-tech",
+    title: "本週個人化：每天執行一次數位整理",
+    detail: "你的弱軸是科技。挑一個 App 關通知或移到次頁。",
+    minutes: 3,
+  },
+  stress: {
+    id: "axis-stress",
+    title: "本週個人化：每天 1 次生理嘆息或散步",
+    detail: "你的弱軸是壓力。挑一個出口把壓力 loop 合上。",
+    minutes: 5,
+  },
+  body: {
+    id: "axis-body",
+    title: "本週個人化：每天伸展 5 分鐘",
+    detail: "你的弱軸是身體。肩、頸、髖三區各 30 秒以上。",
+    minutes: 5,
+  },
+  food: {
+    id: "axis-food",
+    title: "本週個人化：每天有早餐 + 1 份蔬菜",
+    detail: "你的弱軸是飲食。穩定的能量比超完美飲食更有效。",
+    minutes: 5,
+  },
+};
+
+export function planForUser(weakAxis?: WeakAxis): WeekPlan[] {
+  if (!weakAxis) return PLAN;
+  return PLAN.map((w) => {
+    if (w.week === 1 || w.week === 8) return w;
+    return {
+      ...w,
+      tasks: [...w.tasks, AXIS_BONUS[weakAxis]],
+    };
+  });
+}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Check, Moon } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
+import NextStep from "@/components/NextStep";
 
 const STEPS = [
   { id: "phone", title: "把手機放到房間外或視線外", desc: "或開飛航。最關鍵的一步。", min: 1 },
@@ -103,12 +104,20 @@ function WindDownInner() {
       </ul>
 
       {allDone && (
-        <div className="card bg-gradient-to-br from-calm-50 to-calm-100 dark:from-calm-900/30 dark:to-calm-900/10">
-          <div className="text-sm font-medium">你準備好了。</div>
-          <p className="text-xs text-ink-500 mt-1">
-            如果還是睡不著也沒關係。躺著也是休息。記得這個版本明天可以再做一次。
-          </p>
-        </div>
+        <>
+          <div className="card bg-gradient-to-br from-calm-50 to-calm-100 dark:from-calm-900/30 dark:to-calm-900/10">
+            <div className="text-sm font-medium">你準備好了。</div>
+            <p className="text-xs text-ink-500 mt-1">
+              如果還是睡不著也沒關係。躺著也是休息。記得這個版本明天可以再做一次。
+            </p>
+          </div>
+          <NextStep
+            title="明早起床第一件事"
+            reason="把腦袋的雜訊倒出來，再開始一天。"
+            href="/morning-pages"
+            duration="5 分鐘"
+          />
+        </>
       )}
     </div>
   );

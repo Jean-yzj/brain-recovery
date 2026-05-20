@@ -7,9 +7,11 @@ import {
   importJson,
   load,
   setApiKey,
+  setGoal,
+  setTimeBudget,
 } from "@/lib/storage";
-import { AppData } from "@/lib/types";
-import { KeyRound, Download, Upload, Trash2, ExternalLink } from "lucide-react";
+import { AppData, Goal } from "@/lib/types";
+import { KeyRound, Download, Upload, Trash2, ExternalLink, Compass } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
 import Reminders from "@/components/Reminders";
 
@@ -58,6 +60,8 @@ function SettingsInner() {
         <div className="text-sm text-ink-500">設定</div>
         <h1 className="text-2xl font-semibold tracking-tight">你的 App，你做主</h1>
       </div>
+
+      <PersonalizationCard data={data} />
 
       <Reminders />
 
@@ -165,6 +169,72 @@ function SettingsInner() {
         </div>
         <div>本 App 不提供醫療建議。如有嚴重身心症狀，請尋求專業協助。</div>
         <div>免費安心專線：1925（依舊愛我）</div>
+      </div>
+    </div>
+  );
+}
+
+const GOAL_LABELS: Record<Goal, string> = {
+  sleep: "睡得更好",
+  anxiety: "降低焦慮",
+  focus: "提高專注",
+  phone: "減少手機依賴",
+  burnout: "從耗竭走出來",
+  general: "整體平衡",
+};
+
+function PersonalizationCard({ data }: { data: AppData }) {
+  return (
+    <div className="card space-y-4">
+      <div className="flex items-center gap-2">
+        <Compass className="h-4 w-4 text-calm-700 dark:text-calm-300" />
+        <div className="text-sm font-medium">個人化方案</div>
+      </div>
+      <p className="text-xs text-ink-500">
+        這兩個會影響首頁 coach 推薦的優先順序與練習長度。
+      </p>
+
+      <div>
+        <div className="label mb-2">你最想先解決的</div>
+        <div className="grid grid-cols-2 gap-2">
+          {(Object.keys(GOAL_LABELS) as Goal[]).map((g) => (
+            <button
+              key={g}
+              onClick={() => setGoal(g)}
+              className={`rounded-xl border px-3 py-2 text-sm transition ${
+                data.settings.goal === g
+                  ? "bg-calm-700 text-white border-calm-700"
+                  : "bg-white dark:bg-ink-900 border-ink-200 dark:border-ink-800 hover:border-calm-400"
+              }`}
+            >
+              {GOAL_LABELS[g]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-baseline justify-between mb-2">
+          <div className="label">每日時間預算</div>
+          <div className="text-sm tabular-nums text-calm-700 dark:text-calm-300">
+            {data.settings.timeBudgetMin ?? 15} 分鐘
+          </div>
+        </div>
+        <input
+          type="range"
+          min={5}
+          max={60}
+          step={5}
+          value={data.settings.timeBudgetMin ?? 15}
+          onChange={(e) => setTimeBudget(Number(e.target.value))}
+          className="w-full accent-calm-600"
+        />
+        <div className="flex justify-between text-[10px] text-ink-500 mt-1">
+          <span>5</span>
+          <span>15</span>
+          <span>30</span>
+          <span>60+</span>
+        </div>
       </div>
     </div>
   );

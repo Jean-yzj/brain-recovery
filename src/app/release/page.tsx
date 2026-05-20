@@ -6,6 +6,7 @@ import { addRelease, load } from "@/lib/storage";
 import { AppData, StressReleaseLog } from "@/lib/types";
 import { Check, ArrowLeft } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
+import NextStep from "@/components/NextStep";
 
 function ReleaseInner() {
   const [data, setData] = useState<AppData>(load());
@@ -77,6 +78,24 @@ function ReleaseInner() {
             `我做完了，紀錄一次「${picked.title}」`
           )}
         </button>
+
+        {picked.id === "movement" && (
+          <NextStep
+            title="想要更完整的散步？"
+            reason="15 分鐘戶外散步，能讓皮質醇明顯下降。"
+            href="/walk"
+            duration="15 分鐘"
+          />
+        )}
+
+        {picked.id === "breath" && (
+          <NextStep
+            title="呼吸要更深入？"
+            reason="生理嘆息法 60 秒，研究顯示比一般呼吸練習更快放鬆。"
+            href="/sigh"
+            duration="60 秒"
+          />
+        )}
 
         <div className="text-xs text-ink-500 text-center">
           出處：Emily & Amelia Nagoski《Burnout》

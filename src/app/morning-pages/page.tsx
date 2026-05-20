@@ -5,6 +5,7 @@ import { addMorningPage, load, todayISO } from "@/lib/storage";
 import { AppData } from "@/lib/types";
 import { Sunrise, Play, Check, Trash2, Save, RefreshCw, Eye } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
+import NextStep from "@/components/NextStep";
 
 const PRESETS = [
   { min: 5, label: "5 分鐘", desc: "短版（懶人版）" },
@@ -210,15 +211,23 @@ function MorningPagesInner() {
       </div>
 
       {todayPage && (
-        <div className="card bg-gradient-to-br from-calm-50 to-calm-100 dark:from-calm-900/30 dark:to-calm-900/10">
-          <div className="flex items-center gap-2 text-sm">
-            <Check className="h-4 w-4 text-calm-700 dark:text-calm-300" />
-            <span className="font-medium">今天已經寫過了</span>
+        <>
+          <div className="card bg-gradient-to-br from-calm-50 to-calm-100 dark:from-calm-900/30 dark:to-calm-900/10">
+            <div className="flex items-center gap-2 text-sm">
+              <Check className="h-4 w-4 text-calm-700 dark:text-calm-300" />
+              <span className="font-medium">今天已經寫過了</span>
+            </div>
+            <div className="text-xs text-ink-500 mt-1">
+              {todayPage.wordCount} 字 · {todayPage.minutes} 分鐘
+            </div>
           </div>
-          <div className="text-xs text-ink-500 mt-1">
-            {todayPage.wordCount} 字 · {todayPage.minutes} 分鐘
-          </div>
-        </div>
+          <NextStep
+            title="接下來打個卡，讓 coach 知道你的狀態"
+            reason="每日打卡只要 30 秒。資料越多，推薦越準。"
+            href="/daily"
+            duration="30 秒"
+          />
+        </>
       )}
 
       <div className="space-y-2">

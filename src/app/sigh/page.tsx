@@ -5,6 +5,7 @@ import { addSigh, load } from "@/lib/storage";
 import { AppData } from "@/lib/types";
 import { Play, Pause as PauseIcon, RotateCcw, Wind } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
+import NextStep from "@/components/NextStep";
 
 type Phase = "inhale1" | "inhale2" | "exhale" | "rest";
 
@@ -188,12 +189,20 @@ function SighInner() {
       </div>
 
       {done && (
-        <div className="card bg-gradient-to-br from-calm-50 to-calm-100 dark:from-calm-900/30 dark:to-calm-900/10">
-          <div className="text-sm font-medium">做完了。</div>
-          <p className="text-xs text-ink-500 mt-1">
-            真的會有感覺。如果還是緊，再做一輪就好。
-          </p>
-        </div>
+        <>
+          <div className="card bg-gradient-to-br from-calm-50 to-calm-100 dark:from-calm-900/30 dark:to-calm-900/10">
+            <div className="text-sm font-medium">做完了。</div>
+            <p className="text-xs text-ink-500 mt-1">
+              真的會有感覺。如果還是緊，再做一輪就好。
+            </p>
+          </div>
+          <NextStep
+            title="情緒還停留？對自己溫柔一下"
+            reason="Kristin Neff 三步驟自我慈悲，3 分鐘。"
+            href="/compassion"
+            duration="3 分鐘"
+          />
+        </>
       )}
 
       <div className="card flex items-center justify-between">

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PLAN } from "@/lib/plan";
+import { planForUser } from "@/lib/plan";
 import { load, setPlan, toggleTaskComplete } from "@/lib/storage";
 import { AppData } from "@/lib/types";
+import { topAxes, AXIS_LABEL } from "@/lib/assessment";
 import { Check, ChevronRight, ChevronLeft } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
 
@@ -17,7 +18,10 @@ function PlanInner() {
     return () => window.removeEventListener("brain-recovery:update", onUpdate);
   }, []);
 
-  const week = PLAN.find((p) => p.week === viewWeek)!;
+  const assessment = data.assessments[0];
+  const weakAxis = assessment ? topAxes(assessment)[0]?.axis : undefined;
+  const userPlan = planForUser(weakAxis);
+  const week = userPlan.find((p) => p.week === viewWeek)!;
   const completed = data.plan.completedTasks[String(viewWeek)] ?? [];
   const ratio = week.tasks.length
     ? Math.round((completed.length / week.tasks.length) * 100)
@@ -26,6 +30,8 @@ function PlanInner() {
   const startPlan = () => {
     setPlan({ startedAt: new Date().toISOString(), currentWeek: 1 });
   };
+
+  const axisLabel = weakAxis ? AXIS_LABEL[weakAxis].name : null;
 
   const advanceWeek = () => {
     if (data.plan.currentWeek < 8) {
@@ -44,6 +50,13 @@ function PlanInner() {
             一週只給 1–3 個小任務。第一週的目標只是觀察，不需要改變生活方式。
           </p>
         )}
+        {axisLabel && data.plan.startedAt && (
+          <div className="mt-2">
+            <span className="pill text-[11px] bg-calm-100 dark:bg-calm-900/30 text-calm-700 dark:text-calm-200 border-calm-200">
+              個人化中：你的弱軸是「{axisLabel}」
+            </span>
+          </div>
+        )}
       </div>
 
       {!data.plan.startedAt && (
@@ -53,7 +66,7 @@ function PlanInner() {
       )}
 
       <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
-        {PLAN.map((p) => {
+        {userPlan.map((p) => {
           const isCur = p.week === data.plan.currentWeek;
           const isViewing = p.week === viewWeek;
           const wDone = (data.plan.completedTasks[String(p.week)] ?? []).length;

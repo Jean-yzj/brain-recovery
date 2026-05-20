@@ -12,6 +12,7 @@ import {
   DeepWorkSession,
   DefusionLog,
   DetoxState,
+  Goal,
   HabitLog,
   HabitStack,
   MorningPage,
@@ -20,6 +21,8 @@ import {
   QuestState,
   SighSession,
   StressReleaseLog,
+  TriggerLog,
+  WalkSession,
 } from "./types";
 
 const KEY = "brain-recovery-v1";
@@ -42,6 +45,8 @@ const empty: AppData = {
   boredom: [],
   morningPages: [],
   compassion: [],
+  triggers: [],
+  walks: [],
   settings: {},
 };
 
@@ -273,6 +278,40 @@ export function addCompassion(c: CompassionSession) {
     d.compassion = d.compassion || [];
     d.compassion.unshift(c);
     if (d.compassion.length > 200) d.compassion.length = 200;
+  });
+}
+
+export function addTrigger(t: TriggerLog) {
+  update((d) => {
+    d.triggers = d.triggers || [];
+    d.triggers.unshift(t);
+    if (d.triggers.length > 1000) d.triggers.length = 1000;
+  });
+}
+
+export function addWalk(w: WalkSession) {
+  update((d) => {
+    d.walks = d.walks || [];
+    d.walks.unshift(w);
+    if (d.walks.length > 500) d.walks.length = 500;
+  });
+}
+
+export function setGoal(g: Goal) {
+  update((d) => {
+    d.settings.goal = g;
+  });
+}
+
+export function setTimeBudget(m: number) {
+  update((d) => {
+    d.settings.timeBudgetMin = m;
+  });
+}
+
+export function markOnboarded() {
+  update((d) => {
+    d.settings.onboardedAt = new Date().toISOString();
   });
 }
 

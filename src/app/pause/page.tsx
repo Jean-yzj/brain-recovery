@@ -5,6 +5,7 @@ import { PAUSE_TASKS, PauseTask, pickRandomTask } from "@/lib/pause";
 import { addPause } from "@/lib/storage";
 import { Play, Pause as PauseIcon, RefreshCw, Check, X } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
+import NextStep from "@/components/NextStep";
 
 function PauseInner() {
   const [task, setTask] = useState<PauseTask | null>(null);
@@ -147,20 +148,28 @@ function PauseInner() {
       </div>
 
       {done && (
-        <div className="card bg-gradient-to-br from-calm-50 to-calm-100 dark:from-calm-900/30 dark:to-calm-900/10">
-          <div className="text-sm font-medium">恭喜你，給了大腦一個間隙。</div>
-          <div className="text-xs text-ink-500 mt-1">
-            不需要完美，只需要你願意停下來。
+        <>
+          <div className="card bg-gradient-to-br from-calm-50 to-calm-100 dark:from-calm-900/30 dark:to-calm-900/10">
+            <div className="text-sm font-medium">恭喜你，給了大腦一個間隙。</div>
+            <div className="text-xs text-ink-500 mt-1">
+              不需要完美，只需要你願意停下來。
+            </div>
+            <div className="flex gap-2 mt-3">
+              <button onClick={() => setTask(null)} className="btn-ghost">
+                做完了
+              </button>
+              <button onClick={() => pick()} className="btn-soft">
+                再來一個
+              </button>
+            </div>
           </div>
-          <div className="flex gap-2 mt-3">
-            <button onClick={() => setTask(null)} className="btn-ghost">
-              做完了
-            </button>
-            <button onClick={() => pick()} className="btn-soft">
-              再來一個
-            </button>
-          </div>
-        </div>
+          <NextStep
+            title="如果還是很緊繃"
+            reason="60 秒生理嘆息是最快的鬆開法。Stanford 2022 研究。"
+            href="/sigh"
+            duration="60 秒"
+          />
+        </>
       )}
     </div>
   );
