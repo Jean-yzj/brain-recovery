@@ -57,6 +57,33 @@ export interface StressReleaseLog {
   note?: string;
 }
 
+export interface DeepWorkSession {
+  ts: number;
+  minutes: number;
+  label?: string;
+}
+
+export interface DetoxState {
+  challengeId: string;
+  startedAt: string;
+  totalDays: number;
+  rules: string[];
+  completedDays: string[];
+}
+
+export interface DefusionLog {
+  ts: number;
+  thought: string;
+  techniques: string[];
+}
+
+export interface QuestState {
+  date: string;
+  questId: string;
+  completed: boolean;
+  rerolled?: boolean;
+}
+
 export interface PauseSession {
   date: string;
   taskId: string;
@@ -86,10 +113,16 @@ export interface AppData {
   chronotype?: ChronotypeResult;
   caffeine: CaffeineLog[];
   releases: StressReleaseLog[];
+  deepWork: DeepWorkSession[];
+  detox?: DetoxState;
+  defusions: DefusionLog[];
+  quests: QuestState[];
   settings: {
     apiKey?: string;
     name?: string;
     reminders?: ReminderSettings;
+    sleepTargetHours?: number;
+    deepWorkTargetMin?: number;
   };
 }
 

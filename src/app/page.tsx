@@ -11,7 +11,9 @@ import BrainScoreRing from "@/components/BrainScoreRing";
 import { PLAN } from "@/lib/plan";
 import {
   ArrowRight,
+  Bed,
   BookOpen,
+  Brain,
   CalendarCheck2,
   CalendarRange,
   Clock,
@@ -20,7 +22,10 @@ import {
   Heart,
   Moon,
   Pause,
+  Smartphone,
+  Sparkle,
   Sparkles,
+  Target,
   Wind,
   Zap,
 } from "lucide-react";
@@ -240,16 +245,32 @@ function DashboardInner() {
       </Link>
 
       <div className="pt-2">
+        <div className="text-xs text-ink-500 mb-2 ml-1">每日</div>
+        <div className="grid grid-cols-3 gap-2">
+          <Tile href="/quest" icon={<Target className="h-5 w-5" />} title="今日任務" sub="只做這 1 件" />
+          <Tile href="/defuse" icon={<Sparkle className="h-5 w-5" />} title="思緒解離" sub="念頭鬆開" />
+          <Tile href="/deep-work" icon={<Brain className="h-5 w-5" />} title="深度工作" sub="計時器" />
+        </div>
+      </div>
+
+      <div className="pt-2">
         <div className="text-xs text-ink-500 mb-2 ml-1">工具</div>
         <div className="grid grid-cols-3 gap-2">
           <Tile href="/release" icon={<Heart className="h-5 w-5" />} title="壓力出口" sub="7 道門" />
           <Tile href="/caffeine" icon={<Coffee className="h-5 w-5" />} title="咖啡因" sub="半衰期" />
           <Tile href="/sleep-calc" icon={<Clock className="h-5 w-5" />} title="睡眠週期" sub="90 分鐘" />
+          <Tile href="/sleep-debt" icon={<Bed className="h-5 w-5" />} title="睡眠債" sub="14 天滾動" />
           <Tile
             href="/chronotype"
             icon={<Zap className="h-5 w-5" />}
             title="Chronotype"
             sub={data.chronotype ? "已測" : "做測驗"}
+          />
+          <Tile
+            href="/detox"
+            icon={<Smartphone className="h-5 w-5" />}
+            title="數位排毒"
+            sub={data.detox ? "進行中" : "選挑戰"}
           />
           <Tile href="/winddown" icon={<Moon className="h-5 w-5" />} title="睡前儀式" sub="17 分鐘" />
           <Tile

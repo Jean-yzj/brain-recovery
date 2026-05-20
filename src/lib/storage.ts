@@ -7,8 +7,12 @@ import {
   ChatMessage,
   ChronotypeResult,
   DailyLog,
+  DeepWorkSession,
+  DefusionLog,
+  DetoxState,
   PauseSession,
   PlanState,
+  QuestState,
   StressReleaseLog,
 } from "./types";
 
@@ -23,6 +27,9 @@ const empty: AppData = {
   weeklyReports: [],
   caffeine: [],
   releases: [],
+  deepWork: [],
+  defusions: [],
+  quests: [],
   settings: {},
 };
 
@@ -133,6 +140,68 @@ export function addRelease(r: StressReleaseLog) {
     d.releases = d.releases || [];
     d.releases.unshift(r);
     if (d.releases.length > 500) d.releases.length = 500;
+  });
+}
+
+export function addDeepWork(s: DeepWorkSession) {
+  update((d) => {
+    d.deepWork = d.deepWork || [];
+    d.deepWork.unshift(s);
+    if (d.deepWork.length > 1000) d.deepWork.length = 1000;
+  });
+}
+
+export function removeDeepWork(ts: number) {
+  update((d) => {
+    d.deepWork = (d.deepWork || []).filter((x) => x.ts !== ts);
+  });
+}
+
+export function setDetox(s: DetoxState | null) {
+  update((d) => {
+    if (s) d.detox = s;
+    else delete d.detox;
+  });
+}
+
+export function markDetoxDay(date: string, on: boolean) {
+  update((d) => {
+    if (!d.detox) return;
+    const has = d.detox.completedDays.includes(date);
+    if (on && !has) d.detox.completedDays = [...d.detox.completedDays, date];
+    if (!on && has)
+      d.detox.completedDays = d.detox.completedDays.filter((x) => x !== date);
+  });
+}
+
+export function addDefusion(l: DefusionLog) {
+  update((d) => {
+    d.defusions = d.defusions || [];
+    d.defusions.unshift(l);
+    if (d.defusions.length > 200) d.defusions.length = 200;
+  });
+}
+
+export function setTodayQuest(q: QuestState) {
+  update((d) => {
+    d.quests = d.quests || [];
+    const idx = d.quests.findIndex((x) => x.date === q.date);
+    if (idx >= 0) d.quests[idx] = q;
+    else d.quests.unshift(q);
+    d.quests.sort((a, b) => b.date.localeCompare(a.date));
+    if (d.quests.length > 200) d.quests.length = 200;
+  });
+}
+
+export function setSleepTarget(h: number) {
+  update((d) => {
+    d.settings.sleepTargetHours = h;
+  });
+}
+
+export function setDeepWorkTarget(m: number) {
+  update((d) => {
+    d.settings.deepWorkTargetMin = m;
   });
 }
 
