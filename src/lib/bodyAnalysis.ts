@@ -1,4 +1,4 @@
-import { DailyLog, TriggerLog } from "./types";
+import { DailyLog, ScreenTimeLog, TriggerLog } from "./types";
 
 // === 症狀 × 條件 關聯分析 ===
 
@@ -236,6 +236,62 @@ export function triggerStats(triggers: TriggerLog[], days = 30): TriggerStats {
     resistRate: total ? Math.round((resisted / total) * 100) / 100 : 0,
     byType,
     byReason,
+  };
+}
+
+// === 螢幕時間 × 隔日專注 / 情緒 ===
+
+export interface ScreenImpact {
+  pairs: number;
+  // 高螢幕日 = 螢幕 >= 240 分鐘（4 小時）
+  highScreenNextDayFocus: number;
+  highScreenNextDayEnergy: number;
+  highScreenNextDaySleep: number;
+  overallNextDayFocus: number;
+  overallNextDayEnergy: number;
+  overallNextDaySleep: number;
+}
+
+export function screenImpact(
+  daily: DailyLog[],
+  screenTime: ScreenTimeLog[]
+): ScreenImpact | null {
+  if (!screenTime.length || daily.length < 3) return null;
+  const stMap = new Map<string, number>();
+  screenTime.forEach((s) => stMap.set(s.date, s.totalMinutes));
+
+  const sorted = [...daily].sort((a, b) => a.date.localeCompare(b.date));
+  const pairs: {
+    screen: number;
+    nextFocus: number;
+    nextEnergy: number;
+    nextSleep: number;
+  }[] = [];
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const screen = stMap.get(sorted[i].date);
+    if (screen === undefined) continue;
+    pairs.push({
+      screen,
+      nextFocus: sorted[i + 1].focus,
+      nextEnergy: sorted[i + 1].energy,
+      nextSleep: sorted[i + 1].sleepQuality,
+    });
+  }
+  if (pairs.length < 3) return null;
+
+  const high = pairs.filter((p) => p.screen >= 240);
+  if (!high.length) return null;
+  const avgOf = (arr: number[]) =>
+    Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10;
+
+  return {
+    pairs: pairs.length,
+    highScreenNextDayFocus: avgOf(high.map((p) => p.nextFocus)),
+    highScreenNextDayEnergy: avgOf(high.map((p) => p.nextEnergy)),
+    highScreenNextDaySleep: avgOf(high.map((p) => p.nextSleep)),
+    overallNextDayFocus: avgOf(pairs.map((p) => p.nextFocus)),
+    overallNextDayEnergy: avgOf(pairs.map((p) => p.nextEnergy)),
+    overallNextDaySleep: avgOf(pairs.map((p) => p.nextSleep)),
   };
 }
 

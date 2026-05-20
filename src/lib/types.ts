@@ -143,6 +143,14 @@ export interface WalkSession {
   perceivedStressAfter?: number;
 }
 
+export interface ScreenTimeLog {
+  date: string;        // YYYY-MM-DD
+  totalMinutes: number;
+  pickups?: number;
+  topCategory?: string;
+  source: "manual" | "shortcut" | "mac-script" | "daily-checkin";
+}
+
 export interface PauseSession {
   date: string;
   taskId: string;
@@ -184,6 +192,7 @@ export interface AppData {
   compassion: CompassionSession[];
   triggers: TriggerLog[];
   walks: WalkSession[];
+  screenTime: ScreenTimeLog[];
   settings: {
     apiKey?: string;
     name?: string;

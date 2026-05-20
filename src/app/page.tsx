@@ -260,9 +260,9 @@ function DashboardInner() {
         className="card w-full flex items-center justify-between hover:shadow-md transition"
       >
         <div className="text-left">
-          <div className="text-sm font-medium">所有工具</div>
+          <div className="text-sm font-medium">所有功能</div>
           <div className="text-xs text-ink-500 mt-1">
-            25 個依書本設計的功能，自己挑想用的
+            資料 → 分析 → 行動，三層架構
           </div>
         </div>
         <ChevronDown
@@ -273,51 +273,86 @@ function DashboardInner() {
       </button>
 
       {showAllTools && (
-        <div className="space-y-4 animate-fade-in">
-          <Section title="當下緩解">
-            <Tile href="/sigh" icon={<Feather className="h-5 w-5" />} title="生理嘆息" sub="60 秒鬆開" />
-            <Tile href="/pause" icon={<Pause className="h-5 w-5" />} title="Brain Pause" sub="1–3 分鐘" />
-            <Tile href="/defuse" icon={<Sparkle className="h-5 w-5" />} title="思緒解離" sub="念頭鬆開" />
-            <Tile href="/compassion" icon={<HeartHandshake className="h-5 w-5" />} title="自我慈悲" sub="3 步驟" />
-            <Tile href="/release" icon={<Heart className="h-5 w-5" />} title="壓力出口" sub="7 道門" />
-            <Tile href="/walk" icon={<Footprints className="h-5 w-5" />} title="散步處方" sub="15 分鐘" />
-          </Section>
+        <div className="space-y-5 animate-fade-in">
+          {/* 第一層：資料輸入 */}
+          <div>
+            <div className="text-[11px] text-ink-500 mb-1 ml-1 uppercase tracking-wider">
+              ① 資料輸入
+            </div>
+            <Section title="紀錄你的狀態">
+              <Tile href="/daily" icon={<Calendar className="h-5 w-5" />} title="每日打卡" sub="30 秒" />
+              <Tile href="/screentime" icon={<Smartphone className="h-5 w-5" />} title="螢幕時間" sub="Apple 抓資料" />
+              <Tile href="/trigger" icon={<Hourglass className="h-5 w-5" />} title="觸發紀錄" sub="衝動 60 秒" />
+              <Tile href="/caffeine" icon={<Coffee className="h-5 w-5" />} title="咖啡因" sub="半衰期追蹤" />
+              <Tile href="/assessment" icon={<ClipboardCheck className="h-5 w-5" />} title="大腦疲勞檢測" sub="SHIFT 五軸" />
+              <Tile href="/chronotype" icon={<Zap className="h-5 w-5" />} title="Chronotype" sub={data.chronotype ? "已測" : "做測驗"} />
+            </Section>
+          </div>
 
-          <Section title="睡眠">
-            <Tile href="/winddown" icon={<Moon className="h-5 w-5" />} title="睡前儀式" sub="17 分鐘" />
-            <Tile href="/sleep-calc" icon={<Clock className="h-5 w-5" />} title="睡眠週期" sub="90 分鐘" />
-            <Tile href="/sleep-debt" icon={<Bed className="h-5 w-5" />} title="睡眠債" sub="14 天" />
-            <Tile href="/caffeine" icon={<Coffee className="h-5 w-5" />} title="咖啡因" sub="半衰期" />
-            <Tile href="/chronotype" icon={<Zap className="h-5 w-5" />} title="Chronotype" sub={data.chronotype ? "已測" : "做測驗"} />
-          </Section>
+          {/* 第二層：分析洞察 */}
+          <div>
+            <div className="text-[11px] text-ink-500 mb-1 ml-1 uppercase tracking-wider">
+              ② 分析洞察
+            </div>
+            <Section title="看見你的模式">
+              <Tile href="/calendar" icon={<CalendarRange className="h-5 w-5" />} title="月曆視圖" sub="月份顏色" />
+              <Tile href="/body" icon={<HeartHandshake className="h-5 w-5" />} title="身體分析" sub="症狀×大腦" />
+              <Tile href="/insights" icon={<Sparkles className="h-5 w-5" />} title="洞察" sub="趨勢/雷達" />
+              <Tile href="/sleep-debt" icon={<Bed className="h-5 w-5" />} title="睡眠債" sub="14 天滾動" />
+              <Tile href="/history" icon={<CalendarRange className="h-5 w-5" />} title="歷史條列" sub={`${data.daily.length} 天`} />
+              <Tile href="/report" icon={<Sparkles className="h-5 w-5" />} title="AI 報告" sub="每週洞察" />
+            </Section>
+          </div>
 
-          <Section title="心智訓練">
-            <Tile href="/deep-work" icon={<Brain className="h-5 w-5" />} title="深度工作" sub="計時器" />
-            <Tile href="/boredom" icon={<Hourglass className="h-5 w-5" />} title="無聊訓練" sub="多巴胺校準" />
-            <Tile href="/morning-pages" icon={<Sunrise className="h-5 w-5" />} title="晨間日記" sub="意識流" />
-            <Tile href="/detox" icon={<Smartphone className="h-5 w-5" />} title="數位排毒" sub={data.detox ? "進行中" : "選挑戰"} />
-            <Tile href="/habits" icon={<Link2 className="h-5 w-5" />} title="習慣堆疊" sub={`${(data.habits ?? []).length} 條`} />
-          </Section>
+          {/* 第三層：當下行動 */}
+          <div>
+            <div className="text-[11px] text-ink-500 mb-1 ml-1 uppercase tracking-wider">
+              ③ 當下行動
+            </div>
+            <Section title="情緒急救">
+              <Tile href="/sigh" icon={<Feather className="h-5 w-5" />} title="生理嘆息" sub="60 秒鬆開" />
+              <Tile href="/pause" icon={<Pause className="h-5 w-5" />} title="Brain Pause" sub="1–3 分鐘" />
+              <Tile href="/defuse" icon={<Sparkle className="h-5 w-5" />} title="思緒解離" sub="念頭鬆開" />
+              <Tile href="/compassion" icon={<HeartHandshake className="h-5 w-5" />} title="自我慈悲" sub="3 步驟" />
+              <Tile href="/release" icon={<Heart className="h-5 w-5" />} title="壓力出口" sub="7 道門" />
+              <Tile href="/walk" icon={<Footprints className="h-5 w-5" />} title="散步處方" sub="15 分鐘" />
+            </Section>
+            <div className="mt-3" />
+            <Section title="睡眠與恢復">
+              <Tile href="/winddown" icon={<Moon className="h-5 w-5" />} title="睡前儀式" sub="17 分鐘" />
+              <Tile href="/sleep-calc" icon={<Clock className="h-5 w-5" />} title="睡眠週期" sub="90 分鐘" />
+            </Section>
+            <div className="mt-3" />
+            <Section title="長期練習">
+              <Tile href="/deep-work" icon={<Brain className="h-5 w-5" />} title="深度工作" sub="計時器" />
+              <Tile href="/boredom" icon={<Hourglass className="h-5 w-5" />} title="無聊訓練" sub="多巴胺校準" />
+              <Tile href="/morning-pages" icon={<Sunrise className="h-5 w-5" />} title="晨間日記" sub="意識流" />
+              <Tile href="/detox" icon={<Smartphone className="h-5 w-5" />} title="數位排毒" sub={data.detox ? "進行中" : "選挑戰"} />
+              <Tile href="/habits" icon={<Link2 className="h-5 w-5" />} title="習慣堆疊" sub={`${(data.habits ?? []).length} 條`} />
+              <Tile href="/quest" icon={<Target className="h-5 w-5" />} title="今日任務" sub="連續完成" />
+            </Section>
+          </div>
 
-          <Section title="紀錄 & 回顧">
-            <Tile href="/quest" icon={<Target className="h-5 w-5" />} title="今日任務" sub="連續完成" />
-            <Tile href="/trigger" icon={<Smartphone className="h-5 w-5" />} title="觸發紀錄" sub="一鍵 log" />
-            <Tile href="/daily" icon={<Calendar className="h-5 w-5" />} title="每日打卡" sub="30 秒" />
-            <Tile href="/calendar" icon={<CalendarRange className="h-5 w-5" />} title="月曆視圖" sub="月份顏色" />
-            <Tile href="/body" icon={<HeartHandshake className="h-5 w-5" />} title="身體分析" sub="症狀×大腦" />
-            <Tile href="/insights" icon={<Sparkles className="h-5 w-5" />} title="洞察" sub="趨勢/雷達" />
-            <Tile href="/history" icon={<CalendarRange className="h-5 w-5" />} title="歷史條列" sub={`${data.daily.length} 天`} />
-            <Tile href="/learn" icon={<BookOpen className="h-5 w-5" />} title="SHIFT 觀念" sub="了解大腦" />
-          </Section>
-
-          <Section title="整合">
-            <Tile
-              href="/schedule"
-              icon={<Calendar className="h-5 w-5" />}
-              title="排入行事曆"
-              sub="Google 同步"
-            />
-          </Section>
+          {/* 第四層：整合 */}
+          <div>
+            <div className="text-[11px] text-ink-500 mb-1 ml-1 uppercase tracking-wider">
+              ④ 整合
+            </div>
+            <Section title="把練習排進你的一天">
+              <Tile
+                href="/schedule"
+                icon={<Calendar className="h-5 w-5" />}
+                title="Google 行事曆"
+                sub="一鍵排入"
+              />
+              <Tile
+                href="/learn"
+                icon={<BookOpen className="h-5 w-5" />}
+                title="SHIFT 觀念"
+                sub="知識頁"
+              />
+            </Section>
+          </div>
         </div>
       )}
     </div>

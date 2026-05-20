@@ -8,6 +8,7 @@ import {
   burnoutSignal,
   copingImpact,
   recoveryAnalysis,
+  screenImpact,
   triggerStats,
   weekdayPattern,
 } from "@/lib/bodyAnalysis";
@@ -56,6 +57,7 @@ function BodyInner() {
   const burnout = burnoutSignal(data.daily);
   const triggers = triggerStats(data.triggers || [], 30);
   const coping = copingImpact(data.daily);
+  const screen = screenImpact(data.daily, data.screenTime || []);
 
   const burnoutLabel = ["平穩", "輕微訊號", "中度訊號", "明顯訊號", "高度警戒"][
     burnout.level
@@ -223,6 +225,38 @@ function BodyInner() {
         </div>
       )}
 
+      {/* 螢幕時間 × 隔日 */}
+      {screen && (
+        <div className="card">
+          <div className="text-sm font-medium mb-2">螢幕時間 × 隔天</div>
+          <p className="text-xs text-ink-500 mb-3">
+            螢幕 ≥ 4 小時的日子，隔天指標 vs 整體平均：
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            <DeltaCellAbsolute
+              label="專注"
+              high={screen.highScreenNextDayFocus}
+              base={screen.overallNextDayFocus}
+            />
+            <DeltaCellAbsolute
+              label="精神"
+              high={screen.highScreenNextDayEnergy}
+              base={screen.overallNextDayEnergy}
+            />
+            <DeltaCellAbsolute
+              label="睡眠品質"
+              high={screen.highScreenNextDaySleep}
+              base={screen.overallNextDaySleep}
+            />
+          </div>
+          <p className="text-[11px] text-ink-500 mt-3 leading-relaxed">
+            {screen.highScreenNextDayFocus < screen.overallNextDayFocus - 0.3
+              ? "你的大腦在高螢幕日之後，隔天確實會變鈍。"
+              : "目前沒有明顯的『隔天反噬』。但連續高螢幕仍會慢慢累積。"}
+          </p>
+        </div>
+      )}
+
       {/* 撐過去方式 × 隔日 */}
       {coping.length > 0 && (
         <div className="card">
@@ -353,6 +387,45 @@ function DeltaCell({
       <div
         className={`text-sm font-semibold tabular-nums ${
           isBad ? "text-warm-500" : isGood ? "text-calm-700 dark:text-calm-300" : ""
+        }`}
+      >
+        {diff > 0 ? "+" : ""}
+        {diff}
+      </div>
+    </div>
+  );
+}
+
+function DeltaCellAbsolute({
+  label,
+  high,
+  base,
+}: {
+  label: string;
+  high: number;
+  base: number;
+}) {
+  const diff = Math.round((high - base) * 10) / 10;
+  const isBad = diff < -0.3;
+  const isGood = diff > 0.3;
+  return (
+    <div
+      className={`rounded-lg px-2 py-2 ${
+        isBad
+          ? "bg-warm-50 dark:bg-warm-500/10"
+          : isGood
+          ? "bg-calm-50 dark:bg-calm-900/30"
+          : "bg-ink-50 dark:bg-ink-900"
+      }`}
+    >
+      <div className="text-[10px] text-ink-500">{label}</div>
+      <div className="flex items-baseline gap-1.5 mt-0.5">
+        <div className="text-base font-semibold tabular-nums">{high}</div>
+        <div className="text-[10px] text-ink-400">/ {base}</div>
+      </div>
+      <div
+        className={`text-[11px] tabular-nums ${
+          isBad ? "text-warm-500" : isGood ? "text-calm-700 dark:text-calm-300" : "text-ink-500"
         }`}
       >
         {diff > 0 ? "+" : ""}

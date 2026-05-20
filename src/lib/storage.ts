@@ -20,6 +20,7 @@ import {
   PlanState,
   QuestState,
   SighSession,
+  ScreenTimeLog,
   StressReleaseLog,
   TriggerLog,
   WalkSession,
@@ -47,6 +48,7 @@ const empty: AppData = {
   compassion: [],
   triggers: [],
   walks: [],
+  screenTime: [],
   settings: {},
 };
 
@@ -294,6 +296,17 @@ export function addWalk(w: WalkSession) {
     d.walks = d.walks || [];
     d.walks.unshift(w);
     if (d.walks.length > 500) d.walks.length = 500;
+  });
+}
+
+export function upsertScreenTime(s: ScreenTimeLog) {
+  update((d) => {
+    d.screenTime = d.screenTime || [];
+    const idx = d.screenTime.findIndex((x) => x.date === s.date);
+    if (idx >= 0) d.screenTime[idx] = s;
+    else d.screenTime.unshift(s);
+    d.screenTime.sort((a, b) => b.date.localeCompare(a.date));
+    if (d.screenTime.length > 365) d.screenTime.length = 365;
   });
 }
 

@@ -325,6 +325,26 @@ const phoneCoach: Reasoner = (d, now) => {
     }
   }
 
+  // Excessive screen time signal
+  const recentScreen = (d.screenTime || []).slice(0, 7);
+  if (recentScreen.length >= 3) {
+    const avgMin =
+      recentScreen.reduce((a, b) => a + b.totalMinutes, 0) /
+      recentScreen.length;
+    if (avgMin >= 360) {
+      out.push({
+        id: "phone-screentime",
+        priority: 72,
+        category: "tech",
+        title: `你最近平均一天看 ${Math.round(avgMin / 60)} 小時螢幕`,
+        reason:
+          "超過 6 小時的螢幕暴露會明顯影響睡眠和注意力。從『睡前 30 分鐘不滑』開始就好。",
+        href: "/detox",
+        iconKey: "smartphone",
+      });
+    }
+  }
+
   // Many recent triggers → suggest boredom training
   const recentTriggers = (d.triggers || []).filter(
     (t) => hoursAgo(t.ts, now.getTime()) < 24

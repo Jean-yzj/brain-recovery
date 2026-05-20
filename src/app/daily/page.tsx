@@ -8,7 +8,7 @@ import {
   STRESS_SOURCES,
   SYMPTOMS,
 } from "@/lib/types";
-import { load, todayISO, upsertDaily } from "@/lib/storage";
+import { load, todayISO, upsertDaily, upsertScreenTime } from "@/lib/storage";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import ClientOnly from "@/components/ClientOnly";
@@ -32,7 +32,13 @@ const SLIDERS: {
 
 function DailyInner() {
   const today = todayISO();
-  const existing = load().daily.find((d) => d.date === today);
+  const existingData = load();
+  const existing = existingData.daily.find((d) => d.date === today);
+  const existingScreenTime = (existingData.screenTime || []).find((d) => d.date === today);
+  const [screenMinutes, setScreenMinutes] = useState(
+    existingScreenTime?.totalMinutes ?? 180
+  );
+  const [screenSkipped, setScreenSkipped] = useState(!existingScreenTime);
   const [log, setLog] = useState<DailyLog>(
     existing ?? {
       date: today,
@@ -80,6 +86,13 @@ function DailyInner() {
 
   const submit = () => {
     upsertDaily(log);
+    if (!screenSkipped) {
+      upsertScreenTime({
+        date: today,
+        totalMinutes: screenMinutes,
+        source: "daily-checkin",
+      });
+    }
     setSaved(true);
   };
 
@@ -143,6 +156,54 @@ function DailyInner() {
           <span>10</span>
           <span>12</span>
         </div>
+      </div>
+
+      <div className="card">
+        <div className="flex items-baseline justify-between mb-2">
+          <div className="label">今天螢幕使用時間（估計）</div>
+          <div className="text-sm tabular-nums text-calm-700 dark:text-calm-300">
+            {screenSkipped ? "—" : `${Math.floor(screenMinutes / 60)}h ${screenMinutes % 60}m`}
+          </div>
+        </div>
+        {!screenSkipped ? (
+          <>
+            <input
+              type="range"
+              min={0}
+              max={720}
+              step={15}
+              value={screenMinutes}
+              onChange={(e) => setScreenMinutes(Number(e.target.value))}
+              className="w-full accent-calm-600"
+            />
+            <div className="flex justify-between text-[11px] text-ink-500 mt-0.5">
+              <span>0</span>
+              <span>2h</span>
+              <span>4h</span>
+              <span>6h</span>
+              <span>8h</span>
+              <span>10h</span>
+              <span>12h+</span>
+            </div>
+            <button
+              onClick={() => setScreenSkipped(true)}
+              className="text-[11px] text-ink-400 hover:text-ink-700 mt-2"
+            >
+              今天不想填
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => setScreenSkipped(false)}
+            className="text-xs text-calm-700 dark:text-calm-300"
+          >
+            + 加入螢幕使用時間
+          </button>
+        )}
+        <p className="text-[11px] text-ink-500 mt-2 leading-relaxed">
+          iOS：設定 → 螢幕使用時間 → 看到今天總時數。也可以到{" "}
+          <a href="/screentime" className="underline">/screentime</a> 設定自動匯入。
+        </p>
       </div>
 
       <div className="card">
