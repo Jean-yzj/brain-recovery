@@ -19,6 +19,7 @@ import {
   Clock,
   Coffee,
   Feather,
+  Database,
   Flame,
   Footprints,
   Heart,
@@ -350,6 +351,12 @@ function DashboardInner() {
                 icon={<BookOpen className="h-5 w-5" />}
                 title="SHIFT 觀念"
                 sub="知識頁"
+              />
+              <Tile
+                href="/status"
+                icon={<Database className="h-5 w-5" />}
+                title="系統狀態"
+                sub="所有來源"
               />
             </Section>
           </div>
