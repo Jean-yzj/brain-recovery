@@ -126,10 +126,7 @@ function DashboardInner() {
         </h1>
       </div>
 
-      <Link
-        href={ctx.primary.href}
-        className="card block hover:shadow-lg transition bg-gradient-to-br from-calm-700 to-calm-900 text-white border-calm-900"
-      >
+      <div className="card block hover:shadow-lg transition bg-gradient-to-br from-calm-700 to-calm-900 text-white border-calm-900">
         <div className="flex items-center justify-between mb-3">
           <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider bg-white/15 px-2 py-1 rounded-full">
             {ctx.primary.badge || "建議"}
@@ -140,7 +137,7 @@ function DashboardInner() {
             </span>
           )}
         </div>
-        <div className="flex items-start gap-3">
+        <Link href={ctx.primary.href} className="flex items-start gap-3">
           <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <PrimaryIcon className="h-6 w-6" />
           </div>
@@ -153,8 +150,23 @@ function DashboardInner() {
             </div>
           </div>
           <ArrowRight className="h-5 w-5 text-white/70 flex-shrink-0 mt-1.5" />
+        </Link>
+        <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between">
+          <Link
+            href="/schedule"
+            className="text-xs text-white/80 hover:text-white inline-flex items-center gap-1"
+          >
+            <Calendar className="h-3.5 w-3.5" />
+            排進今日行事曆
+          </Link>
+          <Link
+            href={ctx.primary.href}
+            className="text-xs text-white/80 hover:text-white inline-flex items-center gap-1"
+          >
+            現在做 <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
-      </Link>
+      </div>
 
       {ctx.supporting.length > 0 && (
         <div className="space-y-2">
@@ -294,6 +306,15 @@ function DashboardInner() {
             <Tile href="/insights" icon={<Sparkles className="h-5 w-5" />} title="洞察" sub="模式" />
             <Tile href="/history" icon={<CalendarRange className="h-5 w-5" />} title="歷史" sub={`${data.daily.length} 天`} />
             <Tile href="/learn" icon={<BookOpen className="h-5 w-5" />} title="SHIFT 觀念" sub="了解大腦" />
+          </Section>
+
+          <Section title="整合">
+            <Tile
+              href="/schedule"
+              icon={<Calendar className="h-5 w-5" />}
+              title="排入行事曆"
+              sub="Google 同步"
+            />
           </Section>
         </div>
       )}

@@ -11,9 +11,10 @@ import {
   setTimeBudget,
 } from "@/lib/storage";
 import { AppData, Goal } from "@/lib/types";
-import { KeyRound, Download, Upload, Trash2, ExternalLink, Compass } from "lucide-react";
+import { KeyRound, Download, Upload, Trash2, ExternalLink, Compass, LogIn } from "lucide-react";
 import ClientOnly from "@/components/ClientOnly";
 import Reminders from "@/components/Reminders";
+import SignInButton from "@/components/SignInButton";
 
 function SettingsInner() {
   const [data, setData] = useState<AppData>(load());
@@ -59,6 +60,18 @@ function SettingsInner() {
       <div className="pt-2">
         <div className="text-sm text-ink-500">設定</div>
         <h1 className="text-2xl font-semibold tracking-tight">你的 App，你做主</h1>
+      </div>
+
+      <div className="card space-y-3">
+        <div className="flex items-center gap-2">
+          <LogIn className="h-4 w-4 text-calm-700 dark:text-calm-300" />
+          <div className="text-sm font-medium">Google 行事曆 / 提醒事項</div>
+        </div>
+        <p className="text-xs text-ink-500">
+          登入 Google 後，可以把每天的練習一鍵排入你的行事曆或提醒事項。
+          每個人只看到自己的資料 — App 透過 Google 帳號識別，不存任何雲端紀錄。
+        </p>
+        <SignInButton />
       </div>
 
       <PersonalizationCard data={data} />
