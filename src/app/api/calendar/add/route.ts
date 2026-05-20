@@ -33,11 +33,14 @@ export async function POST(req: NextRequest) {
   const timeZone =
     Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Taipei";
 
+  // Google Calendar event color ID 1 = Lavender 薰衣草
+  // 由本 App 建立的事件統一用薰衣草色，方便在行事曆裡一眼識別
   const event = {
     summary,
     description: description ?? "由「大腦不疲勞」建立",
     start: { dateTime: startISO, timeZone },
     end: { dateTime: endISO, timeZone },
+    colorId: "1",
     reminders: {
       useDefault: false,
       overrides: [{ method: "popup", minutes: reminderMin }],
