@@ -15,7 +15,6 @@ import {
   BookOpen,
   Brain,
   CalendarRange,
-  ChevronDown,
   Clock,
   Coffee,
   Feather,
@@ -66,7 +65,6 @@ function DashboardInner() {
   const router = useRouter();
   const [data, setData] = useState<AppData>(load());
   const [now, setNow] = useState(new Date());
-  const [showAllTools, setShowAllTools] = useState(false);
 
   useEffect(() => {
     const onUpdate = () => setData(load());
@@ -256,25 +254,14 @@ function DashboardInner() {
         </Link>
       )}
 
-      <button
-        onClick={() => setShowAllTools((x) => !x)}
-        className="card w-full flex items-center justify-between hover:shadow-md transition"
-      >
-        <div className="text-left">
-          <div className="text-sm font-medium">所有功能</div>
-          <div className="text-xs text-ink-500 mt-1">
-            資料 → 分析 → 行動，三層架構
-          </div>
+      <div className="pt-2">
+        <div className="text-sm font-medium">所有功能</div>
+        <div className="text-xs text-ink-500 mt-1">
+          資料 → 分析 → 行動 → 整合
         </div>
-        <ChevronDown
-          className={`h-5 w-5 text-ink-400 transition-transform ${
-            showAllTools ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+      </div>
 
-      {showAllTools && (
-        <div className="space-y-5 animate-fade-in">
+      <div className="space-y-5">
           {/* 第一層：資料輸入 */}
           <div>
             <div className="text-[11px] text-ink-500 mb-1 ml-1 uppercase tracking-wider">
@@ -361,7 +348,6 @@ function DashboardInner() {
             </Section>
           </div>
         </div>
-      )}
     </div>
   );
 }
