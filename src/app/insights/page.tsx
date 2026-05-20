@@ -83,6 +83,15 @@ function InsightsInner() {
         <h1 className="text-2xl font-semibold tracking-tight">你的模式</h1>
       </div>
 
+      <div className="flex gap-2">
+        <a href="/calendar" className="btn-soft flex-1 justify-center">
+          月曆視圖
+        </a>
+        <a href="/body" className="btn-soft flex-1 justify-center">
+          身體 × 大腦深度
+        </a>
+      </div>
+
       <div className="card">
         <div className="text-sm font-medium mb-3">SHIFT 30 天時間軸</div>
         <SHIFTHeatmap daily={data.daily} days={30} />

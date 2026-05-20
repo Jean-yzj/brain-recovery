@@ -25,6 +25,15 @@ function HistoryInner() {
         </h1>
       </div>
 
+      <div className="flex gap-2">
+        <a href="/calendar" className="btn-soft flex-1 justify-center">
+          月曆視圖
+        </a>
+        <a href="/body" className="btn-soft flex-1 justify-center">
+          身體 × 大腦分析
+        </a>
+      </div>
+
       {data.daily.length === 0 && (
         <div className="card text-sm text-ink-500">先到「打卡」頁留下今天的狀態，之後就會出現在這裡。</div>
       )}

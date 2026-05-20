@@ -303,8 +303,10 @@ function DashboardInner() {
             <Tile href="/quest" icon={<Target className="h-5 w-5" />} title="今日任務" sub="連續完成" />
             <Tile href="/trigger" icon={<Smartphone className="h-5 w-5" />} title="觸發紀錄" sub="一鍵 log" />
             <Tile href="/daily" icon={<Calendar className="h-5 w-5" />} title="每日打卡" sub="30 秒" />
-            <Tile href="/insights" icon={<Sparkles className="h-5 w-5" />} title="洞察" sub="模式" />
-            <Tile href="/history" icon={<CalendarRange className="h-5 w-5" />} title="歷史" sub={`${data.daily.length} 天`} />
+            <Tile href="/calendar" icon={<CalendarRange className="h-5 w-5" />} title="月曆視圖" sub="月份顏色" />
+            <Tile href="/body" icon={<HeartHandshake className="h-5 w-5" />} title="身體分析" sub="症狀×大腦" />
+            <Tile href="/insights" icon={<Sparkles className="h-5 w-5" />} title="洞察" sub="趨勢/雷達" />
+            <Tile href="/history" icon={<CalendarRange className="h-5 w-5" />} title="歷史條列" sub={`${data.daily.length} 天`} />
             <Tile href="/learn" icon={<BookOpen className="h-5 w-5" />} title="SHIFT 觀念" sub="了解大腦" />
           </Section>
 
