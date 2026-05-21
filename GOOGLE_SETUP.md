@@ -24,27 +24,35 @@
    - App name：`大腦不疲勞`
    - User support email：你的 email
    - Developer contact information：你的 email
-4. **Scopes** 區段加入：
+4. 如果這個專案是「一般 Google 登入專案」，**Scopes** 只加入：
    - `.../auth/userinfo.email`
    - `.../auth/userinfo.profile`
    - `openid`
-5. 若你要啟用「排行程」整合，再額外加入：
+5. 若這個專案是「排行程整合專案」，再額外加入：
    - `https://www.googleapis.com/auth/calendar.events`（讀寫今天的事件）
    - `https://www.googleapis.com/auth/tasks`（讀寫提醒事項）
 6. **Test users** 區段：先加入你自己的 Google email（測試階段只能允許名單中的人登入）
 
-> 上線後若希望任何人都能進行「一般 Google 登入」，需要將 App 從「Testing」改成「In production」。若還要開放 Calendar / Tasks 整合給所有人，通常還需要走 Google OAuth 驗證流程。如果只是給自己/朋友用，留在 Testing 模式即可，每個專案最多可加 100 個測試用戶。
+> 想讓「一般登入」不要跳 Google 未驗證警告，最穩定的做法是拆成 **兩個 Google Cloud 專案**：
+> 1. 一個專案只做 `openid / email / profile` 基本登入
+> 2. 另一個專案才做 Calendar / Tasks 整合
+>
+> 上線後若希望任何人都能進行「一般 Google 登入」，需要將登入專案從「Testing」改成「In production」。
+> 如果還要開放 Calendar / Tasks 整合給所有人，通常還需要走 Google OAuth 驗證流程。
+> 如果只是給自己/朋友用，留在 Testing 模式即可，每個專案最多可加 100 個測試用戶。
 
 ### 4. 建立 OAuth Client ID
 1. 「APIs & Services」→「Credentials」
 2. 「Create credentials」→「OAuth client ID」
 3. Application type：**Web application**
 4. Name：`Brain Recovery Web`
-5. **Authorized redirect URIs** 加入兩個：
+5. 若是「一般登入專案」，**Authorized redirect URIs** 加入：
    - `http://localhost:3000/api/auth/callback/google` （開發用）
    - `https://brain-recovery.zeabur.app/api/auth/callback/google` （正式）
-   - 若有自訂網域也一併加入
-6. 建立後會拿到 **Client ID** 和 **Client Secret**，等下會用到
+6. 若是「排行程整合專案」，**Authorized redirect URIs** 改加：
+   - `http://localhost:3000/api/auth/callback/google-integration`
+   - `https://brain-recovery.zeabur.app/api/auth/callback/google-integration`
+7. 建立後會拿到 **Client ID** 和 **Client Secret**，等下會用到
 
 ## 二、設定環境變數
 
@@ -52,15 +60,19 @@
 | 變數名稱            | 用途                                  | 取得方式                                                          |
 | ------------------- | ------------------------------------- | ----------------------------------------------------------------- |
 | `AUTH_SECRET`       | 加密 session cookie 的金鑰            | 終端機跑 `openssl rand -base64 32`                                |
-| `AUTH_GOOGLE_ID`    | OAuth Client ID                       | 上一節建立的 Client ID                                            |
-| `AUTH_GOOGLE_SECRET`| OAuth Client Secret                   | 上一節建立的 Client Secret                                        |
+| `AUTH_GOOGLE_ID`    | 一般登入用 OAuth Client ID            | 「一般登入專案」建立的 Client ID                                  |
+| `AUTH_GOOGLE_SECRET`| 一般登入用 OAuth Client Secret        | 「一般登入專案」建立的 Client Secret                              |
+| `AUTH_GOOGLE_INTEGRATION_ID` | Calendar / Tasks 整合用 Client ID | 「排行程整合專案」建立的 Client ID                         |
+| `AUTH_GOOGLE_INTEGRATION_SECRET` | Calendar / Tasks 整合用 Client Secret | 「排行程整合專案」建立的 Client Secret                 |
 | `AUTH_URL`          | App 正式網域                          | 例如 `https://brain-recovery.zeabur.app`（Zeabur 自動偵測可省略） |
 
 ### 本地開發 (`.env.local`)
 ```
 AUTH_SECRET=你產生的隨機字串
-AUTH_GOOGLE_ID=xxxxxxxxxxxx.apps.googleusercontent.com
-AUTH_GOOGLE_SECRET=GOCSPX-xxxxxxxxxxxx
+AUTH_GOOGLE_ID=一般登入專案的_client_id
+AUTH_GOOGLE_SECRET=一般登入專案的_client_secret
+AUTH_GOOGLE_INTEGRATION_ID=排行程整合專案的_client_id
+AUTH_GOOGLE_INTEGRATION_SECRET=排行程整合專案的_client_secret
 AUTH_URL=http://localhost:3000
 ```
 
@@ -75,9 +87,13 @@ AUTH_URL=http://localhost:3000
 zeabur variable create --service-id <SVC_ID> --env-id <ENV_ID> \
   -k AUTH_SECRET -v "$(openssl rand -base64 32)"
 zeabur variable create --service-id <SVC_ID> --env-id <ENV_ID> \
-  -k AUTH_GOOGLE_ID -v "你的 client id"
+  -k AUTH_GOOGLE_ID -v "一般登入 client id"
 zeabur variable create --service-id <SVC_ID> --env-id <ENV_ID> \
-  -k AUTH_GOOGLE_SECRET -v "你的 client secret"
+  -k AUTH_GOOGLE_SECRET -v "一般登入 client secret"
+zeabur variable create --service-id <SVC_ID> --env-id <ENV_ID> \
+  -k AUTH_GOOGLE_INTEGRATION_ID -v "排行程整合 client id"
+zeabur variable create --service-id <SVC_ID> --env-id <ENV_ID> \
+  -k AUTH_GOOGLE_INTEGRATION_SECRET -v "排行程整合 client secret"
 zeabur variable create --service-id <SVC_ID> --env-id <ENV_ID> \
   -k AUTH_URL -v "https://brain-recovery.zeabur.app"
 ```

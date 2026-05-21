@@ -18,21 +18,35 @@ interface ExtendedToken {
   refreshToken?: string;
   expiresAt?: number;
   scopes?: string;
+  provider?: "google" | "google-integration";
   error?: string;
   picture?: string;
   name?: string;
   email?: string;
 }
 
+function getGoogleClient(provider: ExtendedToken["provider"]) {
+  const isIntegration = provider === "google-integration";
+  return {
+    clientId: isIntegration
+      ? process.env.AUTH_GOOGLE_INTEGRATION_ID ?? process.env.AUTH_GOOGLE_ID ?? ""
+      : process.env.AUTH_GOOGLE_ID ?? "",
+    clientSecret: isIntegration
+      ? process.env.AUTH_GOOGLE_INTEGRATION_SECRET ?? process.env.AUTH_GOOGLE_SECRET ?? ""
+      : process.env.AUTH_GOOGLE_SECRET ?? "",
+  };
+}
+
 async function refreshAccessToken(token: ExtendedToken): Promise<ExtendedToken> {
   try {
     if (!token.refreshToken) throw new Error("missing refresh token");
+    const client = getGoogleClient(token.provider);
     const res = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
-        client_id: process.env.AUTH_GOOGLE_ID ?? "",
-        client_secret: process.env.AUTH_GOOGLE_SECRET ?? "",
+        client_id: client.clientId,
+        client_secret: client.clientSecret,
         grant_type: "refresh_token",
         refresh_token: token.refreshToken,
       }),
@@ -67,8 +81,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       id: "google-integration",
       name: "Google Calendar / Tasks",
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      clientId:
+        process.env.AUTH_GOOGLE_INTEGRATION_ID ?? process.env.AUTH_GOOGLE_ID,
+      clientSecret:
+        process.env.AUTH_GOOGLE_INTEGRATION_SECRET ?? process.env.AUTH_GOOGLE_SECRET,
       authorization: {
         params: {
           scope: INTEGRATION_SCOPES,
@@ -89,6 +105,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         t.refreshToken = account.refresh_token;
         t.expiresAt = account.expires_at;
         t.scopes = account.scope;
+        t.provider = account.provider as ExtendedToken["provider"];
         t.email = profile.email as string | undefined;
         t.name = profile.name as string | undefined;
         t.picture = (profile as { picture?: string }).picture;
