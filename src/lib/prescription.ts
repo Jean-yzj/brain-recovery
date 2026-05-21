@@ -166,7 +166,6 @@ function weeklyProtocol(d: AppData): WeeklyProtocol {
 
   return {
     weekNumber,
-    theme: AXIS_PROTOCOL[axisFocus].theme,
     axisFocus,
     ...AXIS_PROTOCOL[axisFocus],
   };
