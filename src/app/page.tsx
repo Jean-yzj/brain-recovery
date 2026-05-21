@@ -27,6 +27,7 @@ import {
   Link2,
   Moon,
   Pause,
+  Pill,
   ClipboardCheck,
   Smartphone,
   Sparkle,
@@ -128,7 +129,7 @@ function DashboardInner() {
       <div className="card block hover:shadow-lg transition bg-gradient-to-br from-calm-700 to-calm-900 text-white border-calm-900">
         <div className="flex items-center justify-between mb-3">
           <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider bg-white/15 px-2 py-1 rounded-full">
-            {ctx.primary.badge || "建議"}
+            今日劑量
           </span>
           {ctx.primary.duration && (
             <span className="text-xs text-white/80">
@@ -152,11 +153,11 @@ function DashboardInner() {
         </Link>
         <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between">
           <Link
-            href="/schedule"
+            href="/prescription"
             className="text-xs text-white/80 hover:text-white inline-flex items-center gap-1"
           >
-            <Calendar className="h-3.5 w-3.5" />
-            排進今日行事曆
+            <Pill className="h-3.5 w-3.5" />
+            完整處方
           </Link>
           <Link
             href={ctx.primary.href}
@@ -245,9 +246,9 @@ function DashboardInner() {
           className="card flex items-center justify-between hover:shadow-md transition"
         >
           <div>
-            <div className="text-sm font-medium">今天還沒打卡</div>
+            <div className="text-sm font-medium">今天還沒回診打卡</div>
             <div className="text-xs text-ink-500 mt-1">
-              30 秒就好。資料越多 coach 越準。
+              10 秒快速模式就好。資料越多處方越準。
             </div>
           </div>
           <ArrowRight className="h-5 w-5 text-ink-400" />
@@ -283,6 +284,7 @@ function DashboardInner() {
               ② 分析洞察
             </div>
             <Section title="看見你的模式">
+              <Tile href="/prescription" icon={<Pill className="h-5 w-5" />} title="處方" sub="本週協議" />
               <Tile href="/calendar" icon={<CalendarRange className="h-5 w-5" />} title="月曆視圖" sub="月份顏色" />
               <Tile href="/body" icon={<HeartHandshake className="h-5 w-5" />} title="身體分析" sub="症狀×大腦" />
               <Tile href="/insights" icon={<Sparkles className="h-5 w-5" />} title="洞察" sub="趨勢/雷達" />

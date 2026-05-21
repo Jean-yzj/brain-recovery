@@ -9,10 +9,21 @@ import {
   SYMPTOMS,
 } from "@/lib/types";
 import { load, todayISO, upsertDaily, upsertScreenTime } from "@/lib/storage";
-import { Check } from "lucide-react";
+import { Check, ChevronDown, Zap } from "lucide-react";
 import Link from "next/link";
 import ClientOnly from "@/components/ClientOnly";
 import NextStep from "@/components/NextStep";
+
+const MOOD_OPTIONS: { emoji: string; label: string; emotion: string }[] = [
+  { emoji: "😩", label: "燃盡", emotion: "疲憊" },
+  { emoji: "😣", label: "緊繃", emotion: "緊繃" },
+  { emoji: "😐", label: "麻木", emotion: "麻木" },
+  { emoji: "🙂", label: "OK", emotion: "平靜" },
+  { emoji: "😌", label: "穩定", emotion: "踏實" },
+  { emoji: "✨", label: "有勁", emotion: "有動力" },
+];
+
+const MODE_KEY = "brain-recovery-daily-mode";
 
 const SLIDERS: {
   key: keyof Pick<
@@ -57,12 +68,40 @@ function DailyInner() {
     }
   );
   const [saved, setSaved] = useState(false);
+  const [mode, setMode] = useState<"quick" | "full">("quick");
+  const [pickedMood, setPickedMood] = useState<string | null>(
+    (existing?.emotions ?? []).find((e) =>
+      MOOD_OPTIONS.some((m) => m.emotion === e)
+    ) ?? null
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem(MODE_KEY);
+    if (stored === "full" || stored === "quick") setMode(stored);
+  }, []);
 
   useEffect(() => {
     if (!saved) return;
     const t = setTimeout(() => setSaved(false), 2000);
     return () => clearTimeout(t);
   }, [saved]);
+
+  const switchMode = (m: "quick" | "full") => {
+    setMode(m);
+    if (typeof window !== "undefined") window.localStorage.setItem(MODE_KEY, m);
+  };
+
+  const pickMood = (emotion: string) => {
+    setPickedMood(emotion);
+    // Replace any existing mood emoji emotion with this one
+    setLog((cur) => {
+      const others = (cur.emotions ?? []).filter(
+        (e) => !MOOD_OPTIONS.some((m) => m.emotion === e)
+      );
+      return { ...cur, emotions: [...others, emotion] };
+    });
+  };
 
   const toggle = (key: "symptoms" | "copingHabits" | "stressSources", v: string) => {
     setLog((cur) => {
@@ -96,15 +135,61 @@ function DailyInner() {
     setSaved(true);
   };
 
+  // Quick-mode primary 3 sliders
+  const QUICK_SLIDERS = SLIDERS.slice(0, 3);
+
   return (
     <div className="space-y-5 animate-fade-in pb-4">
-      <div className="pt-2">
-        <div className="text-sm text-ink-500">每日大腦狀態</div>
-        <h1 className="text-2xl font-semibold tracking-tight">30 秒，幫大腦留個聲音</h1>
+      <div className="pt-2 flex items-baseline justify-between">
+        <div>
+          <div className="text-sm text-ink-500">回診打卡</div>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {mode === "quick" ? "10 秒就好" : "完整模式"}
+          </h1>
+        </div>
+        <button
+          onClick={() => switchMode(mode === "quick" ? "full" : "quick")}
+          className="text-xs text-calm-700 dark:text-calm-300 hover:underline inline-flex items-center gap-1"
+        >
+          {mode === "quick" ? (
+            <>
+              <ChevronDown className="h-3.5 w-3.5" /> 展開完整
+            </>
+          ) : (
+            <>
+              <Zap className="h-3.5 w-3.5" /> 切回快速
+            </>
+          )}
+        </button>
       </div>
 
+      {/* Mood picker — both modes */}
+      <div className="card">
+        <div className="text-xs text-ink-500 mb-3">今天的感覺最像？</div>
+        <div className="grid grid-cols-6 gap-1.5">
+          {MOOD_OPTIONS.map((m) => {
+            const on = pickedMood === m.emotion;
+            return (
+              <button
+                key={m.emotion}
+                onClick={() => pickMood(m.emotion)}
+                className={`rounded-xl py-2 flex flex-col items-center transition ${
+                  on
+                    ? "bg-calm-700 text-white"
+                    : "bg-ink-50 dark:bg-ink-900 hover:bg-ink-100 dark:hover:bg-ink-800"
+                }`}
+              >
+                <div className="text-xl leading-none">{m.emoji}</div>
+                <div className="text-[10px] mt-1">{m.label}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Sliders — quick = 3, full = 5 */}
       <div className="card space-y-5">
-        {SLIDERS.map(({ key, label, low, high }) => (
+        {(mode === "quick" ? QUICK_SLIDERS : SLIDERS).map(({ key, label, low, high }) => (
           <div key={key}>
             <div className="flex items-baseline justify-between mb-1.5">
               <div className="label">{label}</div>
@@ -131,33 +216,36 @@ function DailyInner() {
         ))}
       </div>
 
-      <div className="card">
-        <div className="flex items-baseline justify-between mb-2">
-          <div className="label">昨晚睡了幾小時？</div>
-          <div className="text-sm tabular-nums text-calm-700 dark:text-calm-300">
-            {log.sleepHours ?? 7} 小時
+      {mode === "full" && (
+        <div className="card">
+          <div className="flex items-baseline justify-between mb-2">
+            <div className="label">昨晚睡了幾小時？</div>
+            <div className="text-sm tabular-nums text-calm-700 dark:text-calm-300">
+              {log.sleepHours ?? 7} 小時
+            </div>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={12}
+            step={0.5}
+            value={log.sleepHours ?? 7}
+            onChange={(e) =>
+              setLog({ ...log, sleepHours: Number(e.target.value) })
+            }
+            className="w-full accent-calm-600"
+          />
+          <div className="flex justify-between text-[11px] text-ink-500 mt-0.5">
+            <span>0</span>
+            <span>4</span>
+            <span>7</span>
+            <span>10</span>
+            <span>12</span>
           </div>
         </div>
-        <input
-          type="range"
-          min={0}
-          max={12}
-          step={0.5}
-          value={log.sleepHours ?? 7}
-          onChange={(e) =>
-            setLog({ ...log, sleepHours: Number(e.target.value) })
-          }
-          className="w-full accent-calm-600"
-        />
-        <div className="flex justify-between text-[11px] text-ink-500 mt-0.5">
-          <span>0</span>
-          <span>4</span>
-          <span>7</span>
-          <span>10</span>
-          <span>12</span>
-        </div>
-      </div>
+      )}
 
+      {mode === "full" && (
       <div className="card">
         <div className="flex items-baseline justify-between mb-2">
           <div className="label">今天螢幕使用時間（估計）</div>
@@ -205,7 +293,9 @@ function DailyInner() {
           <a href="/screentime" className="underline">/screentime</a> 設定自動匯入。
         </p>
       </div>
+      )}
 
+      {mode === "full" && (
       <div className="card">
         <div className="label mb-1">今天最像哪幾種情緒？（多選）</div>
         <p className="text-[11px] text-ink-500 mb-3">
@@ -241,28 +331,35 @@ function DailyInner() {
           ))}
         </div>
       </div>
+      )}
 
-      <ChipGroup
-        title="身體有沒有出現警訊？（多選）"
-        options={[...SYMPTOMS]}
-        active={log.symptoms}
-        onToggle={(v) => toggle("symptoms", v)}
-      />
+      {mode === "full" && (
+        <>
+          <ChipGroup
+            title="身體有沒有出現警訊？（多選）"
+            options={[...SYMPTOMS]}
+            active={log.symptoms}
+            onToggle={(v) => toggle("symptoms", v)}
+          />
 
-      <ChipGroup
-        title="今天靠什麼撐過去？（多選）"
-        options={[...COPING_HABITS]}
-        active={log.copingHabits}
-        onToggle={(v) => toggle("copingHabits", v)}
-      />
+          <ChipGroup
+            title="今天靠什麼撐過去？（多選）"
+            options={[...COPING_HABITS]}
+            active={log.copingHabits}
+            onToggle={(v) => toggle("copingHabits", v)}
+          />
 
-      <ChipGroup
-        title="今天的壓力來源？（多選）"
-        options={[...STRESS_SOURCES]}
-        active={log.stressSources}
-        onToggle={(v) => toggle("stressSources", v)}
-      />
+          <ChipGroup
+            title="今天的壓力來源？（多選）"
+            options={[...STRESS_SOURCES]}
+            active={log.stressSources}
+            onToggle={(v) => toggle("stressSources", v)}
+          />
+        </>
+      )}
 
+      {mode === "full" && (
+      <>
       <div className="card">
         <label className="label">想多寫一句也可以（選填）</label>
         <textarea
@@ -327,6 +424,8 @@ function DailyInner() {
           />
         </div>
       </div>
+      </>
+      )}
 
       <div className="flex items-center gap-3">
         <button onClick={submit} className="btn-primary flex-1">
@@ -334,22 +433,30 @@ function DailyInner() {
             <>
               <Check className="h-4 w-4" /> 已儲存
             </>
+          ) : mode === "quick" ? (
+            "存下，回去看處方"
           ) : (
             "存下今天的狀態"
           )}
         </button>
         {saved && (
-          <Link href="/" className="btn-ghost">
-            回首頁
+          <Link href="/prescription" className="btn-ghost">
+            看處方
           </Link>
         )}
       </div>
 
+      {mode === "quick" && !saved && (
+        <p className="text-[11px] text-ink-500 text-center">
+          這就夠了。想填情緒、症狀、反思？右上角「展開完整」。
+        </p>
+      )}
+
       {saved && (
         <NextStep
-          title="看看 coach 根據今天的狀態給你的建議"
-          reason="你剛寫的會立刻影響首頁的推薦。"
-          href="/"
+          title="處方已根據今天的狀態調整"
+          reason="去看 coach 為今天客製的劑量。"
+          href="/prescription"
         />
       )}
     </div>
